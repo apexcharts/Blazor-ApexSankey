@@ -1,0 +1,132 @@
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sln.ide
+*.csproj.user
+*.dbmdl
+*.jfm
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+
+# Build artifacts
+artifacts/
+nupkg/
+publish/
+out/
+
+# Blazor WebAssembly
+wwwroot/_framework/
+wwwroot/css/app.min.css
+wwwroot/js/app.min.js
+*.staticwebassets.runtime.json
+staticwebassets.build.json
+
+# ASP.NET
+ScaffoldingReadMe.txt
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# Node (if any tooling)
+node_modules/
+package-lock.json
+yarn.lock
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+.AppleDouble
+.LSOverride
+
+# Windows
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.nfs*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+*.lcov
+
+# Backup files
+*.bak
+*.orig
+
+# Local environment
+.env
+.env.local
+.env.*.local
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# dotnet tools
+.config/dotnet-tools.json
+
+# BenchmarkDotNet
+BenchmarkDotNet.Artifacts/
+
+# User-specific
+*.rsuser
+*.userprefs
+*.cache

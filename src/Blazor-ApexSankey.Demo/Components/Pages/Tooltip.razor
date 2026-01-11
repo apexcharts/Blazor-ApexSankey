@@ -1,0 +1,366 @@
+@page "/tooltip"
+
+<PageTitle>Tooltip Customization - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Tooltip Customization</h1>
+    <p class="description">Custom tooltip templates with interactive controls for tooltip appearance.</p>
+
+    <div class="controls-panel">
+        <h3>Interactive Controls</h3>
+        <div class="controls-grid">
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" @bind="_enableTooltip" @bind:event="onchange" @onclick="UpdateOptions" />
+                    Enable Tooltip
+                </label>
+            </div>
+            <div class="control-group">
+                <label>Tooltip Background:</label>
+                <input type="color" @bind="_tooltipBgColor" @bind:event="onchange" @oninput="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <label>Tooltip Border:</label>
+                <input type="color" @bind="_tooltipBorderColor" @bind:event="onchange" @oninput="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <label>Template Style:</label>
+                <select @bind="_selectedTemplate" @bind:event="onchange" @bind:after="UpdateOptions">
+                    <option value="default">Default</option>
+                    <option value="detailed">Detailed</option>
+                    <option value="minimal">Minimal</option>
+                    <option value="colorful">Colorful</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data"
+                    Options="@_options"
+                    OnNodeClick="@HandleNodeClick"
+                    Style="margin: 0 auto; width: 800px; height: 500px;" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(_clickedNode))
+    {
+        <div class="event-log">
+            <strong>Last clicked:</strong> @_clickedNode
+        </div>
+    }
+
+    <div class="code-section">
+        <h3>Key Features</h3>
+        <ul class="features-list">
+            <li>Custom tooltip templates using JavaScript functions</li>
+            <li>Configurable background and border colors</li>
+            <li>Multiple template styles to choose from</li>
+            <li>Access to source, target, and value data</li>
+        </ul>
+    </div>
+
+    <div class="code-section">
+        <h3>Current Template Code</h3>
+        <pre><code>@GetCurrentTemplateCode()</code></pre>
+    </div>
+
+    <div class="code-section">
+        <h3>Usage in C#</h3>
+        <pre><code>@_usageExample</code></pre>
+    </div>
+</div>
+
+@code {
+    private string? _clickedNode;
+    
+    // interactive control values
+    private bool _enableTooltip = true;
+    private string _tooltipBgColor = "#FFFFFF";
+    private string _tooltipBorderColor = "#BCBCBC";
+    private string _selectedTemplate = "default";
+
+    private SankeyData _data = new()
+    {
+        Nodes = new List<SankeyNode>
+        {
+            new() { Id = "Marketing", Title = "Marketing", Color = "#4f8cff" },
+            new() { Id = "Sales", Title = "Sales", Color = "#00cec9" },
+            new() { Id = "Engineering", Title = "Engineering", Color = "#6c5ce7" },
+            new() { Id = "Website", Title = "Website", Color = "#fd79a8" },
+            new() { Id = "Mobile App", Title = "Mobile App", Color = "#fdcb6e" },
+            new() { Id = "Direct", Title = "Direct", Color = "#00b894" },
+            new() { Id = "Leads", Title = "Leads", Color = "#e17055" },
+            new() { Id = "Opportunities", Title = "Opportunities", Color = "#0984e3" },
+            new() { Id = "Closed Won", Title = "Closed Won", Color = "#00b894" },
+            new() { Id = "Closed Lost", Title = "Closed Lost", Color = "#d63031" }
+        },
+        Edges = new List<SankeyEdge>
+        {
+            new() { Source = "Marketing", Target = "Website", Value = 50 },
+            new() { Source = "Marketing", Target = "Mobile App", Value = 30 },
+            new() { Source = "Sales", Target = "Direct", Value = 40 },
+            new() { Source = "Engineering", Target = "Website", Value = 20 },
+            new() { Source = "Website", Target = "Leads", Value = 60 },
+            new() { Source = "Mobile App", Target = "Leads", Value = 25 },
+            new() { Source = "Direct", Target = "Leads", Value = 35 },
+            new() { Source = "Leads", Target = "Opportunities", Value = 80 },
+            new() { Source = "Opportunities", Target = "Closed Won", Value = 50 },
+            new() { Source = "Opportunities", Target = "Closed Lost", Value = 30 }
+        }
+    };
+
+    private SankeyOptions _options = new()
+    {
+        NodeWidth = 20,
+        FontFamily = "Quicksand, sans-serif",
+        FontWeight = "600",
+        EnableTooltip = true,
+        TooltipBGColor = "#FFFFFF",
+        TooltipBorderColor = "#BCBCBC"
+    };
+
+    private void UpdateOptions()
+    {
+        _options = new SankeyOptions
+        {
+            NodeWidth = 20,
+            FontFamily = "Quicksand, sans-serif",
+            FontWeight = "600",
+            EnableTooltip = _enableTooltip,
+            TooltipBGColor = _tooltipBgColor,
+            TooltipBorderColor = _tooltipBorderColor,
+            TooltipTemplate = GetTooltipTemplate()
+        };
+    }
+
+    private string? GetTooltipTemplate()
+    {
+        return _selectedTemplate switch
+        {
+            "detailed" => GetDetailedTemplate(),
+            "minimal" => GetMinimalTemplate(),
+            "colorful" => GetColorfulTemplate(),
+            _ => null // use default
+        };
+    }
+
+    private string GetDetailedTemplate()
+    {
+        return @"({source, target, value}) => {
+            const percentage = ((value / 120) * 100).toFixed(1);
+            return `
+                <div style='padding: 16px; font-family: system-ui, sans-serif; min-width: 200px;'>
+                    <div style='font-weight: 700; font-size: 14px; color: #1a1a2e; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;'>
+                        Flow Details
+                    </div>
+                    <div style='display: flex; align-items: center; gap: 8px; margin-bottom: 8px;'>
+                        <div style='width: 12px; height: 12px; background: ${source.color}; border-radius: 2px;'></div>
+                        <span style='font-weight: 600;'>From:</span> ${source.title}
+                    </div>
+                    <div style='display: flex; align-items: center; gap: 8px; margin-bottom: 8px;'>
+                        <div style='width: 12px; height: 12px; background: ${target.color}; border-radius: 2px;'></div>
+                        <span style='font-weight: 600;'>To:</span> ${target.title}
+                    </div>
+                    <div style='margin-top: 12px; padding-top: 8px; border-top: 1px solid #eee;'>
+                        <div style='font-size: 24px; font-weight: 700; color: #4f8cff;'>${value}</div>
+                        <div style='font-size: 12px; color: #666;'>${percentage}% of total flow</div>
+                    </div>
+                </div>
+            `;
+        }";
+    }
+
+    private string GetMinimalTemplate()
+    {
+        return @"({source, target, value}) => {
+            return `
+                <div style='padding: 8px 12px; font-family: system-ui; font-size: 13px;'>
+                    ${source.title} → ${target.title}: <strong>${value}</strong>
+                </div>
+            `;
+        }";
+    }
+
+    private string GetColorfulTemplate()
+    {
+        return @"({source, target, value}) => {
+            return `
+                <div style='padding: 12px; font-family: system-ui; background: linear-gradient(135deg, ${source.color}22, ${target.color}22); border-radius: 8px;'>
+                    <div style='display: flex; align-items: center; justify-content: space-between; gap: 16px;'>
+                        <div style='text-align: center;'>
+                            <div style='width: 40px; height: 40px; background: ${source.color}; border-radius: 50%; margin: 0 auto 4px;'></div>
+                            <div style='font-size: 11px; font-weight: 600;'>${source.title}</div>
+                        </div>
+                        <div style='font-size: 20px; font-weight: 700; color: #333;'>→</div>
+                        <div style='text-align: center;'>
+                            <div style='width: 40px; height: 40px; background: ${target.color}; border-radius: 50%; margin: 0 auto 4px;'></div>
+                            <div style='font-size: 11px; font-weight: 600;'>${target.title}</div>
+                        </div>
+                    </div>
+                    <div style='text-align: center; margin-top: 12px; font-size: 18px; font-weight: 700;'>${value} units</div>
+                </div>
+            `;
+        }";
+    }
+
+    private string GetCurrentTemplateCode()
+    {
+        return _selectedTemplate switch
+        {
+            "detailed" => "// detailed template with percentage calculation\n" + GetDetailedTemplate(),
+            "minimal" => "// minimal one-line template\n" + GetMinimalTemplate(),
+            "colorful" => "// colorful gradient template\n" + GetColorfulTemplate(),
+            _ => "// using default template (null)"
+        };
+    }
+
+    private void HandleNodeClick(NodeClickEventArgs args)
+    {
+        _clickedNode = $"{args.Node.Title} (ID: {args.Node.Id})";
+        StateHasChanged();
+    }
+
+    private string _usageExample = @"// setting up tooltip in C#
+var options = new SankeyOptions
+{
+    EnableTooltip = true,
+    TooltipBGColor = ""#FFFFFF"",
+    TooltipBorderColor = ""#BCBCBC"",
+    TooltipTemplate = GetCustomTemplate()
+};
+
+// custom template method
+private string GetCustomTemplate()
+{
+    return @""({source, target, value}) => {
+        return `
+            <div style='padding: 12px;'>
+                <strong>${source.title}</strong> → 
+                <strong>${target.title}</strong>: ${value}
+            </div>
+        `;
+    }"";
+}";
+}
+
+<style>
+    .demo-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+    }
+
+    .description {
+        color: #666;
+        margin-bottom: 24px;
+    }
+
+    .controls-panel {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 16px;
+    }
+
+    .controls-panel h3 {
+        font-size: 0.9rem;
+        color: #1a1a2e;
+        margin-bottom: 16px;
+    }
+
+    .controls-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .control-group label {
+        font-size: 0.85rem;
+        color: #444;
+    }
+
+    .control-group input[type="color"] {
+        width: 60px;
+        height: 30px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .control-group input[type="checkbox"] {
+        margin-right: 8px;
+    }
+
+    .control-group select {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    .chart-container {
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 24px;
+    }
+
+    .event-log {
+        background: #e8f4fd;
+        border: 1px solid #b8daff;
+        border-radius: 4px;
+        padding: 12px 16px;
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+    }
+
+    .code-section {
+        background: #1a1a2e;
+        border-radius: 8px;
+        padding: 20px;
+        color: #fff;
+        margin-bottom: 16px;
+    }
+
+    .code-section h3 {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        opacity: 0.7;
+    }
+
+    .features-list {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 0.9rem;
+        line-height: 1.8;
+    }
+
+    .features-list li {
+        opacity: 0.9;
+    }
+
+    .code-section pre {
+        margin: 0;
+        overflow-x: auto;
+    }
+
+    .code-section code {
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+</style>

@@ -1,0 +1,224 @@
+@using System.Text.Json
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+<div id="@_elementId" class="@Class" style="@Style"></div>
+
+@code {
+    private string _elementId = $"apex-sankey-{Guid.NewGuid():N}";
+    private IJSObjectReference? _module;
+    private DotNetObjectReference<ApexSankey>? _dotNetRef;
+    private bool _isInitialized;
+    private bool _disposed;
+    private string? _lastDataHash;
+
+    /// <summary>
+    /// the data for the sankey diagram (nodes, edges, options)
+    /// </summary>
+    [Parameter]
+    public SankeyData? Data { get; set; }
+
+    /// <summary>
+    /// configuration options for the chart appearance
+    /// </summary>
+    [Parameter]
+    public SankeyOptions? Options { get; set; }
+
+    /// <summary>
+    /// callback when a node is clicked
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeClickEventArgs> OnNodeClick { get; set; }
+
+    /// <summary>
+    /// callback when the chart finishes rendering
+    /// </summary>
+    [Parameter]
+    public EventCallback OnRender { get; set; }
+
+    /// <summary>
+    /// additional CSS classes for the container
+    /// </summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>
+    /// inline styles for the container
+    /// </summary>
+    [Parameter]
+    public string? Style { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitializeChartAsync();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_isInitialized && Data is not null)
+        {
+            var currentHash = ComputeHash(Data, Options);
+            if (currentHash != _lastDataHash)
+            {
+                _lastDataHash = currentHash;
+                // recreate chart to apply new options
+                await ReInitializeChartAsync();
+            }
+        }
+    }
+
+    private async Task ReInitializeChartAsync()
+    {
+        if (_module is null || Data is null) return;
+
+        try
+        {
+            // destroy existing chart
+            await _module.InvokeVoidAsync("destroy", _elementId);
+            
+            // recreate with new options and data
+            var options = SerializeOptions();
+            var data = SerializeData();
+            await _module.InvokeVoidAsync("create", _elementId, options, data, _dotNetRef);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Failed to reinitialize ApexSankey chart", ex);
+        }
+    }
+
+    private async Task InitializeChartAsync()
+    {
+        if (Data is null) return;
+
+        try
+        {
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>(
+                "import", "./_content/Blazor-ApexSankey/blazor-apexsankey.js");
+
+            _dotNetRef = DotNetObjectReference.Create(this);
+            _lastDataHash = ComputeHash(Data, Options);
+
+            var options = SerializeOptions();
+            var data = SerializeData();
+
+            await _module.InvokeVoidAsync("create", _elementId, options, data, _dotNetRef);
+            _isInitialized = true;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Failed to initialize ApexSankey chart", ex);
+        }
+    }
+
+    /// <summary>
+    /// forces a re-render of the chart
+    /// </summary>
+    public async Task RefreshAsync()
+    {
+        if (_isInitialized && Data is not null)
+        {
+            _lastDataHash = ComputeHash(Data, Options);
+            await ReInitializeChartAsync();
+        }
+    }
+
+    /// <summary>
+    /// exports the chart as SVG
+    /// </summary>
+    public async Task ExportToSvgAsync()
+    {
+        if (_module is not null && _isInitialized)
+        {
+            await _module.InvokeVoidAsync("exportToSvg", _elementId);
+        }
+    }
+
+    /// <summary>
+    /// sets the license key (call before creating any charts)
+    /// </summary>
+    public static async Task<bool> SetLicenseAsync(IJSRuntime jsRuntime, string licenseKey)
+    {
+        return await ApexSankeyInterop.SetLicenseAsync(jsRuntime, licenseKey);
+    }
+
+    [JSInvokable]
+    public async Task OnNodeClickCallback(SankeyNodeInfo node)
+    {
+        if (OnNodeClick.HasDelegate)
+        {
+            await OnNodeClick.InvokeAsync(new NodeClickEventArgs { Node = node });
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnRenderCallback()
+    {
+        if (OnRender.HasDelegate)
+        {
+            await OnRender.InvokeAsync();
+        }
+    }
+
+    private object SerializeOptions()
+    {
+        if (Options is null)
+        {
+            return new { };
+        }
+
+        return JsonSerializer.Deserialize<Dictionary<string, object?>>(
+            JsonSerializer.Serialize(Options, new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            })) ?? new Dictionary<string, object?>();
+    }
+
+    private object SerializeData()
+    {
+        if (Data is null)
+        {
+            return new { nodes = Array.Empty<object>(), edges = Array.Empty<object>() };
+        }
+
+        return JsonSerializer.Deserialize<Dictionary<string, object?>>(
+            JsonSerializer.Serialize(Data, new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            })) ?? new Dictionary<string, object?>();
+    }
+
+    private static string ComputeHash(SankeyData? data, SankeyOptions? options)
+    {
+        var dataJson = data is not null ? JsonSerializer.Serialize(data) : "";
+        var optionsJson = options is not null ? JsonSerializer.Serialize(options) : "";
+        return (dataJson + optionsJson).GetHashCode().ToString();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposed)
+        {
+            if (_module is not null)
+            {
+                try
+                {
+                    await _module.InvokeVoidAsync("destroy", _elementId);
+                    await _module.DisposeAsync();
+                }
+                catch
+                {
+                    // ignore errors during disposal
+                }
+            }
+
+            _dotNetRef?.Dispose();
+            _disposed = true;
+        }
+        GC.SuppressFinalize(this);
+    }
+}

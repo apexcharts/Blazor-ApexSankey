@@ -1,0 +1,261 @@
+@page "/node-customization"
+
+<PageTitle>Node Customization - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Node Customization</h1>
+    <p class="description">Complex multi-level flow diagram showing application pipeline through multiple stages.</p>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data"
+                    Options="@_options"
+                    OnNodeClick="@HandleNodeClick"
+                    Style="margin: 0 auto; width: 800px; height: 700px;" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(_clickedNode))
+    {
+        <div class="event-log">
+            <strong>Last clicked:</strong> @_clickedNode
+        </div>
+    }
+
+    <div class="code-section">
+        <h3>Key Features</h3>
+        <ul class="features-list">
+            <li>5-level deep flow structure</li>
+            <li>Multiple parallel paths</li>
+            <li>Narrow nodes with borders</li>
+            <li>Disabled edge gradient for clarity</li>
+        </ul>
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_codeExample</code></pre>
+    </div>
+</div>
+
+@code {
+    private string? _clickedNode;
+
+    private SankeyData _data = new()
+    {
+        Nodes = new List<SankeyNode>
+        {
+            new() { Id = "Applications", Title = "Applications" },
+            new() { Id = "Accepted", Title = "Accepted" },
+            new() { Id = "Rejected", Title = "Rejected" },
+            new() { Id = "In Progress", Title = "In Progress" },
+            new() { Id = "Software Engineering", Title = "Software Engineering" },
+            new() { Id = "Data Science", Title = "Data Science" },
+            new() { Id = "Marketing", Title = "Marketing" },
+            new() { Id = "Sales", Title = "Sales" },
+            new() { Id = "HR", Title = "HR" },
+            new() { Id = "Finance", Title = "Finance" },
+            new() { Id = "Internship", Title = "Internship" },
+            new() { Id = "Junior", Title = "Junior" },
+            new() { Id = "Mid-level", Title = "Mid-level" },
+            new() { Id = "Senior", Title = "Senior" },
+            new() { Id = "Entry Level", Title = "Entry Level" },
+            new() { Id = "Full-time", Title = "Full-time" },
+            new() { Id = "Part-time", Title = "Part-time" }
+        },
+        Edges = new List<SankeyEdge>
+        {
+            // stage 1: applications to status
+            new() { Source = "Applications", Target = "Accepted", Value = 10 },
+            new() { Source = "Applications", Target = "Rejected", Value = 15 },
+            new() { Source = "Applications", Target = "In Progress", Value = 10 },
+            
+            // stage 2: accepted to departments
+            new() { Source = "Accepted", Target = "Software Engineering", Value = 4 },
+            new() { Source = "Accepted", Target = "Data Science", Value = 2 },
+            new() { Source = "Accepted", Target = "Marketing", Value = 1 },
+            new() { Source = "Accepted", Target = "Sales", Value = 1 },
+            new() { Source = "Accepted", Target = "HR", Value = 1 },
+            new() { Source = "Accepted", Target = "Finance", Value = 1 },
+            
+            // stage 2: rejected to departments
+            new() { Source = "Rejected", Target = "Software Engineering", Value = 5 },
+            new() { Source = "Rejected", Target = "Data Science", Value = 3 },
+            new() { Source = "Rejected", Target = "Marketing", Value = 2 },
+            new() { Source = "Rejected", Target = "Sales", Value = 2 },
+            new() { Source = "Rejected", Target = "HR", Value = 2 },
+            new() { Source = "Rejected", Target = "Finance", Value = 1 },
+            
+            // stage 2: in progress to departments
+            new() { Source = "In Progress", Target = "Software Engineering", Value = 3 },
+            new() { Source = "In Progress", Target = "Data Science", Value = 2 },
+            new() { Source = "In Progress", Target = "Marketing", Value = 2 },
+            new() { Source = "In Progress", Target = "Sales", Value = 1 },
+            new() { Source = "In Progress", Target = "HR", Value = 1 },
+            new() { Source = "In Progress", Target = "Finance", Value = 1 },
+            
+            // stage 3: departments to levels
+            new() { Source = "Software Engineering", Target = "Internship", Value = 1 },
+            new() { Source = "Software Engineering", Target = "Junior", Value = 1 },
+            new() { Source = "Software Engineering", Target = "Mid-level", Value = 1 },
+            new() { Source = "Software Engineering", Target = "Senior", Value = 1 },
+            new() { Source = "Software Engineering", Target = "Entry Level", Value = 1 },
+            
+            new() { Source = "Data Science", Target = "Internship", Value = 1 },
+            new() { Source = "Data Science", Target = "Junior", Value = 1 },
+            new() { Source = "Data Science", Target = "Mid-level", Value = 1 },
+            new() { Source = "Data Science", Target = "Senior", Value = 1 },
+            new() { Source = "Data Science", Target = "Entry Level", Value = 1 },
+            
+            new() { Source = "Marketing", Target = "Internship", Value = 1 },
+            new() { Source = "Marketing", Target = "Junior", Value = 1 },
+            new() { Source = "Marketing", Target = "Mid-level", Value = 1 },
+            new() { Source = "Marketing", Target = "Senior", Value = 1 },
+            new() { Source = "Marketing", Target = "Entry Level", Value = 1 },
+            
+            new() { Source = "Sales", Target = "Internship", Value = 1 },
+            new() { Source = "Sales", Target = "Junior", Value = 1 },
+            new() { Source = "Sales", Target = "Mid-level", Value = 1 },
+            new() { Source = "Sales", Target = "Senior", Value = 1 },
+            new() { Source = "Sales", Target = "Entry Level", Value = 1 },
+            
+            new() { Source = "HR", Target = "Internship", Value = 1 },
+            new() { Source = "HR", Target = "Junior", Value = 1 },
+            new() { Source = "HR", Target = "Mid-level", Value = 1 },
+            new() { Source = "HR", Target = "Senior", Value = 1 },
+            new() { Source = "HR", Target = "Entry Level", Value = 1 },
+            
+            new() { Source = "Finance", Target = "Internship", Value = 1 },
+            new() { Source = "Finance", Target = "Junior", Value = 1 },
+            new() { Source = "Finance", Target = "Mid-level", Value = 1 },
+            new() { Source = "Finance", Target = "Senior", Value = 1 },
+            new() { Source = "Finance", Target = "Entry Level", Value = 1 },
+            
+            // stage 4: levels to employment type
+            new() { Source = "Internship", Target = "Full-time", Value = 1 },
+            new() { Source = "Internship", Target = "Part-time", Value = 1 },
+            new() { Source = "Junior", Target = "Full-time", Value = 1 },
+            new() { Source = "Junior", Target = "Part-time", Value = 1 },
+            new() { Source = "Mid-level", Target = "Full-time", Value = 1 },
+            new() { Source = "Mid-level", Target = "Part-time", Value = 1 },
+            new() { Source = "Senior", Target = "Full-time", Value = 1 },
+            new() { Source = "Senior", Target = "Part-time", Value = 1 },
+            new() { Source = "Entry Level", Target = "Full-time", Value = 1 },
+            new() { Source = "Entry Level", Target = "Part-time", Value = 1 }
+        }
+    };
+
+    private SankeyOptions _options = new()
+    {
+        Width = "90%",
+        FontFamily = "Quicksand, sans-serif",
+        FontWeight = "600",
+        NodeWidth = 5,
+        NodeBorderWidth = 2,
+        NodeBorderColor = "#111",
+        EdgeGradientFill = false
+    };
+
+    private void HandleNodeClick(NodeClickEventArgs args)
+    {
+        _clickedNode = $"{args.Node.Title} (ID: {args.Node.Id})";
+        StateHasChanged();
+    }
+
+    private string _codeExample = @"// complex multi-level data structure
+var data = new SankeyData
+{
+    Nodes = new List<SankeyNode>
+    {
+        // level 1
+        new() { Id = ""Applications"", Title = ""Applications"" },
+        // level 2
+        new() { Id = ""Accepted"", Title = ""Accepted"" },
+        new() { Id = ""Rejected"", Title = ""Rejected"" },
+        // level 3: departments
+        new() { Id = ""Software Engineering"", Title = ""Software Engineering"" },
+        // ... more nodes
+    },
+    Edges = new List<SankeyEdge>
+    {
+        // applications -> status
+        new() { Source = ""Applications"", Target = ""Accepted"", Value = 10 },
+        // status -> departments
+        new() { Source = ""Accepted"", Target = ""Software Engineering"", Value = 4 },
+        // departments -> levels
+        new() { Source = ""Software Engineering"", Target = ""Junior"", Value = 1 },
+        // levels -> type
+        new() { Source = ""Junior"", Target = ""Full-time"", Value = 1 },
+        // ... more edges
+    }
+};";
+}
+
+<style>
+    .demo-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+    }
+
+    .description {
+        color: #666;
+        margin-bottom: 24px;
+    }
+
+    .chart-container {
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 24px;
+    }
+
+    .event-log {
+        background: #e8f4fd;
+        border: 1px solid #b8daff;
+        border-radius: 4px;
+        padding: 12px 16px;
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+    }
+
+    .code-section {
+        background: #1a1a2e;
+        border-radius: 8px;
+        padding: 20px;
+        color: #fff;
+        margin-bottom: 16px;
+    }
+
+    .code-section h3 {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        opacity: 0.7;
+    }
+
+    .features-list {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 0.9rem;
+        line-height: 1.8;
+    }
+
+    .features-list li {
+        opacity: 0.9;
+    }
+
+    .code-section pre {
+        margin: 0;
+        overflow-x: auto;
+    }
+
+    .code-section code {
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+</style>

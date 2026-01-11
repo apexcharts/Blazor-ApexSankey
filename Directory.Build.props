@@ -1,0 +1,17 @@
+<Project>
+  <PropertyGroup>
+    <!-- Shared properties for all projects -->
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    
+    <!-- Package metadata -->
+    <Authors>ApexCharts</Authors>
+    <Company>ApexCharts</Company>
+    <Copyright>Copyright © ApexCharts 2025</Copyright>
+    <RepositoryUrl>https://github.com/apexcharts/Blazor-ApexSankey</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Blazor_ApexSankey</RootNamespace>
+    <AssemblyName>Blazor-ApexSankey</AssemblyName>
+    
+    <!-- NuGet Package Configuration -->
+    <PackageId>Blazor-ApexSankey</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>ApexCharts</Authors>
+    <Company>ApexCharts</Company>
+    <Product>Blazor-ApexSankey</Product>
+    <Description>A Blazor component library for creating interactive Sankey diagrams using ApexSankey. Supports WebAssembly with two-way data binding, customizable styling, and event handling.</Description>
+    <PackageTags>blazor;sankey;chart;diagram;visualization;apexcharts;webassembly;wasm;component</PackageTags>
+    <PackageProjectUrl>https://github.com/apexcharts/Blazor-ApexSankey</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/apexcharts/Blazor-ApexSankey</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Copyright>Copyright © ApexCharts 2025</Copyright>
+    
+    <!-- Package Settings -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

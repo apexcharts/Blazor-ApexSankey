@@ -1,0 +1,257 @@
+@page "/alternate-node"
+
+<PageTitle>Alternate Node - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Alternate Node Style</h1>
+    <p class="description">Node styling with custom borders and disabled edge gradient fill.</p>
+
+    <div class="controls-panel">
+        <h3>Interactive Controls</h3>
+        <div class="controls-grid">
+            <div class="control-group">
+                <label>Node Width: @_nodeWidth px</label>
+                <input type="range" min="2" max="30" @bind="_nodeWidth" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <label>Node Border Width: @_nodeBorderWidth px</label>
+                <input type="range" min="0" max="5" @bind="_nodeBorderWidth" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <label>Node Border Color:</label>
+                <input type="color" @bind="_nodeBorderColor" @bind:event="onchange" @oninput="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" @bind="_edgeGradientFill" @bind:event="onchange" @onclick="UpdateOptions" />
+                    Edge Gradient Fill
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data"
+                    Options="@_options"
+                    OnNodeClick="@HandleNodeClick"
+                    Style="margin: 0 auto; width: 90%; height: 400px;" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(_clickedNode))
+    {
+        <div class="event-log">
+            <strong>Last clicked:</strong> @_clickedNode
+        </div>
+    }
+
+    <div class="code-section">
+        <h3>Key Features</h3>
+        <ul class="features-list">
+            <li>Narrow node width (5px)</li>
+            <li>Custom node border (2px, #111)</li>
+            <li>Disabled edge gradient fill</li>
+            <li>Percentage-based width (90%)</li>
+        </ul>
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_codeExample</code></pre>
+    </div>
+</div>
+
+@code {
+    private string? _clickedNode;
+    
+    // interactive control values
+    private int _nodeWidth = 5;
+    private int _nodeBorderWidth = 2;
+    private string _nodeBorderColor = "#111111";
+    private bool _edgeGradientFill = false;
+
+    private SankeyData _data = new()
+    {
+        Nodes = new List<SankeyNode>
+        {
+            new() { Id = "John", Title = "John" },
+            new() { Id = "Raoul", Title = "Raoul" },
+            new() { Id = "Jane", Title = "Jane" },
+            new() { Id = "Marcel", Title = "Marcel" },
+            new() { Id = "Ibrahim", Title = "Ibrahim" },
+            new() { Id = "Junko", Title = "Junko" }
+        },
+        Edges = new List<SankeyEdge>
+        {
+            new() { Source = "Marcel", Target = "Ibrahim", Value = 72 },
+            new() { Source = "Marcel", Target = "Raoul", Value = 155 },
+            new() { Source = "Raoul", Target = "John", Value = 109 },
+            new() { Source = "Raoul", Target = "Ibrahim", Value = 100 },
+            new() { Source = "Ibrahim", Target = "Jane", Value = 100 },
+            new() { Source = "Ibrahim", Target = "Junko", Value = 127 },
+            new() { Source = "Ibrahim", Target = "John", Value = 67 },
+            new() { Source = "Junko", Target = "Jane", Value = 140 },
+            new() { Source = "Junko", Target = "John", Value = 93 }
+        }
+    };
+
+    private SankeyOptions _options = new()
+    {
+        Width = "90%",
+        FontFamily = "Quicksand, sans-serif",
+        FontWeight = "600",
+        NodeWidth = 5,
+        NodeBorderWidth = 2,
+        NodeBorderColor = "#111",
+        EdgeGradientFill = false
+    };
+
+    private void UpdateOptions()
+    {
+        _options = new SankeyOptions
+        {
+            Width = "90%",
+            FontFamily = "Quicksand, sans-serif",
+            FontWeight = "600",
+            NodeWidth = _nodeWidth,
+            NodeBorderWidth = _nodeBorderWidth,
+            NodeBorderColor = _nodeBorderColor,
+            EdgeGradientFill = _edgeGradientFill
+        };
+    }
+
+    private void HandleNodeClick(NodeClickEventArgs args)
+    {
+        _clickedNode = $"{args.Node.Title} (ID: {args.Node.Id})";
+        StateHasChanged();
+    }
+
+    private string _codeExample = @"var options = new SankeyOptions
+{
+    Width = ""90%"",
+    FontFamily = ""Quicksand, sans-serif"",
+    FontWeight = ""600"",
+    NodeWidth = 5,
+    NodeBorderWidth = 2,
+    NodeBorderColor = ""#111"",
+    EdgeGradientFill = false  // solid color edges
+};";
+}
+
+<style>
+    .demo-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+    }
+
+    .description {
+        color: #666;
+        margin-bottom: 24px;
+    }
+
+    .controls-panel {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 16px;
+    }
+
+    .controls-panel h3 {
+        font-size: 0.9rem;
+        color: #1a1a2e;
+        margin-bottom: 16px;
+    }
+
+    .controls-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .control-group label {
+        font-size: 0.85rem;
+        color: #444;
+    }
+
+    .control-group input[type="range"] {
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .control-group input[type="color"] {
+        width: 60px;
+        height: 30px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .control-group input[type="checkbox"] {
+        margin-right: 8px;
+    }
+
+    .chart-container {
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 24px;
+    }
+
+    .event-log {
+        background: #e8f4fd;
+        border: 1px solid #b8daff;
+        border-radius: 4px;
+        padding: 12px 16px;
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+    }
+
+    .code-section {
+        background: #1a1a2e;
+        border-radius: 8px;
+        padding: 20px;
+        color: #fff;
+        margin-bottom: 16px;
+    }
+
+    .code-section h3 {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        opacity: 0.7;
+    }
+
+    .features-list {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 0.9rem;
+        line-height: 1.8;
+    }
+
+    .features-list li {
+        opacity: 0.9;
+    }
+
+    .code-section pre {
+        margin: 0;
+        overflow-x: auto;
+    }
+
+    .code-section code {
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+</style>

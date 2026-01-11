@@ -1,0 +1,341 @@
+@page "/edge-options"
+
+<PageTitle>Edge Options - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Edge Options</h1>
+    <p class="description">Customizing edge appearance with opacity settings. Shows qualification levels flowing to industries.</p>
+
+    <div class="controls-panel">
+        <h3>Interactive Controls</h3>
+        <div class="controls-grid">
+            <div class="control-group">
+                <label>Edge Opacity: @_edgeOpacity.ToString("F2")</label>
+                <input type="range" min="0.05" max="1" step="0.05" @bind="_edgeOpacity" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <label>Node Width: @_nodeWidth px</label>
+                <input type="range" min="5" max="40" @bind="_nodeWidth" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" @bind="_edgeGradientFill" @bind:event="onchange" @onclick="UpdateOptions" />
+                    Edge Gradient Fill
+                </label>
+            </div>
+            <div class="control-group">
+                <label>Spacing: @_spacing px</label>
+                <input type="range" min="20" max="150" @bind="_spacing" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data"
+                    Options="@_options"
+                    OnNodeClick="@HandleNodeClick"
+                    Style="margin: 0 auto; width: 800px; height: 700px;" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(_clickedNode))
+    {
+        <div class="event-log">
+            <strong>Last clicked:</strong> @_clickedNode
+        </div>
+    }
+
+    <div class="code-section">
+        <h3>Key Features</h3>
+        <ul class="features-list">
+            <li>Custom edge opacity (0.2)</li>
+            <li>Three-level flow: Region → Qualification → Industry</li>
+            <li>Standard node width with gradient fill</li>
+        </ul>
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_codeExample</code></pre>
+    </div>
+</div>
+
+@code {
+    private string? _clickedNode;
+    
+    // interactive control values
+    private double _edgeOpacity = 0.2;
+    private int _nodeWidth = 20;
+    private bool _edgeGradientFill = true;
+    private int _spacing = 100;
+
+    private SankeyData _data = new()
+    {
+        Nodes = new List<SankeyNode>
+        {
+            // regions
+            new() { Id = "England", Title = "England" },
+            new() { Id = "Wales", Title = "Wales" },
+            
+            // qualification levels
+            new() { Id = "Level 4", Title = "Level 4" },
+            new() { Id = "Level 3", Title = "Level 3" },
+            new() { Id = "Level 2", Title = "Level 2" },
+            new() { Id = "Level 1 and entry level", Title = "Level 1 and entry level" },
+            new() { Id = "No qualifications", Title = "No qualifications" },
+            new() { Id = "Other", Title = "Other" },
+            
+            // industries
+            new() { Id = "Wholesale & retail", Title = "Wholesale & retail" },
+            new() { Id = "Health & social work", Title = "Health & social work" },
+            new() { Id = "Education", Title = "Education" },
+            new() { Id = "Construction", Title = "Construction" },
+            new() { Id = "Manufacturing", Title = "Manufacturing" },
+            new() { Id = "Transport & storage", Title = "Transport & storage" },
+            new() { Id = "Finance & insurance", Title = "Finance & insurance" }
+        },
+        Edges = new List<SankeyEdge>
+        {
+            // england to qualifications
+            new() { Source = "England", Target = "Level 4", Value = 13 },
+            new() { Source = "England", Target = "Level 3", Value = 8 },
+            new() { Source = "England", Target = "Level 2", Value = 8 },
+            new() { Source = "England", Target = "Level 1 and entry level", Value = 6 },
+            new() { Source = "England", Target = "No qualifications", Value = 3 },
+            
+            // wales to qualifications
+            new() { Source = "Wales", Target = "Level 4", Value = 7 },
+            new() { Source = "Wales", Target = "Level 3", Value = 8 },
+            new() { Source = "Wales", Target = "Level 2", Value = 4 },
+            new() { Source = "Wales", Target = "Level 1 and entry level", Value = 5 },
+            new() { Source = "Wales", Target = "No qualifications", Value = 5 },
+            
+            // level 4 to industries
+            new() { Source = "Level 4", Target = "Wholesale & retail", Value = 4 },
+            new() { Source = "Level 4", Target = "Health & social work", Value = 3 },
+            new() { Source = "Level 4", Target = "Education", Value = 2 },
+            new() { Source = "Level 4", Target = "Construction", Value = 1 },
+            new() { Source = "Level 4", Target = "Manufacturing", Value = 2 },
+            new() { Source = "Level 4", Target = "Other", Value = 3 },
+            new() { Source = "Level 4", Target = "Transport & storage", Value = 2 },
+            new() { Source = "Level 4", Target = "Finance & insurance", Value = 3 },
+            
+            // level 3 to industries
+            new() { Source = "Level 3", Target = "Wholesale & retail", Value = 3 },
+            new() { Source = "Level 3", Target = "Health & social work", Value = 2 },
+            new() { Source = "Level 3", Target = "Education", Value = 1 },
+            new() { Source = "Level 3", Target = "Construction", Value = 2 },
+            new() { Source = "Level 3", Target = "Manufacturing", Value = 1 },
+            new() { Source = "Level 3", Target = "Other", Value = 3 },
+            new() { Source = "Level 3", Target = "Transport & storage", Value = 2 },
+            new() { Source = "Level 3", Target = "Finance & insurance", Value = 2 },
+            
+            // level 2 to industries
+            new() { Source = "Level 2", Target = "Wholesale & retail", Value = 2 },
+            new() { Source = "Level 2", Target = "Health & social work", Value = 1 },
+            new() { Source = "Level 2", Target = "Education", Value = 2 },
+            new() { Source = "Level 2", Target = "Construction", Value = 1 },
+            new() { Source = "Level 2", Target = "Manufacturing", Value = 2 },
+            new() { Source = "Level 2", Target = "Other", Value = 2 },
+            new() { Source = "Level 2", Target = "Transport & storage", Value = 1 },
+            new() { Source = "Level 2", Target = "Finance & insurance", Value = 1 },
+            
+            // level 1 to industries
+            new() { Source = "Level 1 and entry level", Target = "Wholesale & retail", Value = 1 },
+            new() { Source = "Level 1 and entry level", Target = "Health & social work", Value = 2 },
+            new() { Source = "Level 1 and entry level", Target = "Education", Value = 1 },
+            new() { Source = "Level 1 and entry level", Target = "Construction", Value = 2 },
+            new() { Source = "Level 1 and entry level", Target = "Manufacturing", Value = 1 },
+            new() { Source = "Level 1 and entry level", Target = "Other", Value = 2 },
+            new() { Source = "Level 1 and entry level", Target = "Transport & storage", Value = 1 },
+            new() { Source = "Level 1 and entry level", Target = "Finance & insurance", Value = 1 },
+            
+            // no qualifications to industries
+            new() { Source = "No qualifications", Target = "Wholesale & retail", Value = 1 },
+            new() { Source = "No qualifications", Target = "Health & social work", Value = 1 },
+            new() { Source = "No qualifications", Target = "Education", Value = 1 },
+            new() { Source = "No qualifications", Target = "Construction", Value = 1 },
+            new() { Source = "No qualifications", Target = "Manufacturing", Value = 1 },
+            new() { Source = "No qualifications", Target = "Other", Value = 1 },
+            new() { Source = "No qualifications", Target = "Transport & storage", Value = 1 },
+            new() { Source = "No qualifications", Target = "Finance & insurance", Value = 1 }
+        }
+    };
+
+    private SankeyOptions _options = new()
+    {
+        NodeWidth = 20,
+        FontFamily = "Quicksand, sans-serif",
+        FontWeight = "600",
+        EdgeOpacity = 0.2,
+        EdgeGradientFill = true,
+        Spacing = 100
+    };
+
+    private void UpdateOptions()
+    {
+        _options = new SankeyOptions
+        {
+            NodeWidth = _nodeWidth,
+            FontFamily = "Quicksand, sans-serif",
+            FontWeight = "600",
+            EdgeOpacity = _edgeOpacity,
+            EdgeGradientFill = _edgeGradientFill,
+            Spacing = _spacing
+        };
+    }
+
+    private void HandleNodeClick(NodeClickEventArgs args)
+    {
+        _clickedNode = $"{args.Node.Title} (ID: {args.Node.Id})";
+        StateHasChanged();
+    }
+
+    private string _codeExample = @"// customizing edge opacity
+var options = new SankeyOptions
+{
+    NodeWidth = 20,
+    FontFamily = ""Quicksand, sans-serif"",
+    FontWeight = ""600"",
+    EdgeOpacity = 0.2  // values from 0.0 to 1.0
+};
+
+// three-level flow structure
+var data = new SankeyData
+{
+    Nodes = new List<SankeyNode>
+    {
+        // level 1: regions
+        new() { Id = ""England"", Title = ""England"" },
+        new() { Id = ""Wales"", Title = ""Wales"" },
+        
+        // level 2: qualifications
+        new() { Id = ""Level 4"", Title = ""Level 4"" },
+        new() { Id = ""Level 3"", Title = ""Level 3"" },
+        // ...
+        
+        // level 3: industries
+        new() { Id = ""Wholesale & retail"", Title = ""Wholesale & retail"" },
+        // ...
+    },
+    Edges = new List<SankeyEdge>
+    {
+        // region -> qualification
+        new() { Source = ""England"", Target = ""Level 4"", Value = 13 },
+        
+        // qualification -> industry
+        new() { Source = ""Level 4"", Target = ""Wholesale & retail"", Value = 4 },
+        // ...
+    }
+};";
+}
+
+<style>
+    .demo-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+    }
+
+    .description {
+        color: #666;
+        margin-bottom: 24px;
+    }
+
+    .controls-panel {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 16px;
+    }
+
+    .controls-panel h3 {
+        font-size: 0.9rem;
+        color: #1a1a2e;
+        margin-bottom: 16px;
+    }
+
+    .controls-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .control-group label {
+        font-size: 0.85rem;
+        color: #444;
+    }
+
+    .control-group input[type="range"] {
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .control-group input[type="checkbox"] {
+        margin-right: 8px;
+    }
+
+    .chart-container {
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 24px;
+    }
+
+    .event-log {
+        background: #e8f4fd;
+        border: 1px solid #b8daff;
+        border-radius: 4px;
+        padding: 12px 16px;
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+    }
+
+    .code-section {
+        background: #1a1a2e;
+        border-radius: 8px;
+        padding: 20px;
+        color: #fff;
+        margin-bottom: 16px;
+    }
+
+    .code-section h3 {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        opacity: 0.7;
+    }
+
+    .features-list {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 0.9rem;
+        line-height: 1.8;
+    }
+
+    .features-list li {
+        opacity: 0.9;
+    }
+
+    .code-section pre {
+        margin: 0;
+        overflow-x: auto;
+    }
+
+    .code-section code {
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+</style>

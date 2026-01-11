@@ -1,0 +1,401 @@
+@page "/node-overlapping"
+
+<PageTitle>Node Overlapping - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Node Overlapping</h1>
+    <p class="description">Handling many nodes with custom spacing and smaller font size to prevent overlapping.</p>
+
+    <div class="controls-panel">
+        <h3>Interactive Controls</h3>
+        <div class="controls-grid">
+            <div class="control-group">
+                <label>Spacing: @_spacing px</label>
+                <input type="range" min="5" max="50" @bind="_spacing" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <label>Font Size: @_fontSizeValue px</label>
+                <input type="range" min="6" max="16" @bind="_fontSizeValue" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <label>Node Width: @_nodeWidth px</label>
+                <input type="range" min="5" max="30" @bind="_nodeWidth" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" @bind="_edgeGradientFill" @bind:event="onchange" @onclick="UpdateOptions" />
+                    Edge Gradient Fill
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data"
+                    Options="@_options"
+                    OnNodeClick="@HandleNodeClick"
+                    Style="margin: 0 auto; width: 800px; height: 600px;" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(_clickedNode))
+    {
+        <div class="event-log">
+            <strong>Last clicked:</strong> @_clickedNode
+        </div>
+    }
+
+    <div class="code-section">
+        <h3>Key Features</h3>
+        <ul class="features-list">
+            <li>Many nodes (70+ items)</li>
+            <li>Custom spacing (20px) to handle density</li>
+            <li>Smaller font size (10px)</li>
+            <li>Product categories flowing to individual products</li>
+        </ul>
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_codeExample</code></pre>
+    </div>
+</div>
+
+@code {
+    private string? _clickedNode;
+    
+    // interactive control values
+    private int _spacing = 20;
+    private int _fontSizeValue = 10;
+    private int _nodeWidth = 20;
+    private bool _edgeGradientFill = true;
+
+    private SankeyData _data = new()
+    {
+        Nodes = new List<SankeyNode>
+        {
+            // categories
+            new() { Id = "Beverages", Title = "Beverages" },
+            new() { Id = "Condiments", Title = "Condiments" },
+            new() { Id = "Produce", Title = "Produce" },
+            new() { Id = "Seafood", Title = "Seafood" },
+            new() { Id = "Dairy Products", Title = "Dairy Products" },
+            new() { Id = "Confections", Title = "Confections" },
+            new() { Id = "Grains-Cereals", Title = "Grains-Cereals" },
+            new() { Id = "Meat-Poultry", Title = "Meat-Poultry" },
+            
+            // products
+            new() { Id = "Chai", Title = "Chai" },
+            new() { Id = "Chang", Title = "Chang" },
+            new() { Id = "Aniseed Syrup", Title = "Aniseed Syrup" },
+            new() { Id = "Chef Anton's Cajun Seasoning", Title = "Chef Anton's Cajun Seasoning" },
+            new() { Id = "Grandma's Boysenberry Spread", Title = "Grandma's Boysenberry Spread" },
+            new() { Id = "Uncle Bob's Organic Dried Pears", Title = "Uncle Bob's Organic Dried Pears" },
+            new() { Id = "Northwoods Cranberry Sauce", Title = "Northwoods Cranberry Sauce" },
+            new() { Id = "Ikura", Title = "Ikura" },
+            new() { Id = "Queso Cabrales", Title = "Queso Cabrales" },
+            new() { Id = "Queso Manchego La Pastora", Title = "Queso Manchego La Pastora" },
+            new() { Id = "Konbu", Title = "Konbu" },
+            new() { Id = "Tofu", Title = "Tofu" },
+            new() { Id = "Genen Shouyu", Title = "Genen Shouyu" },
+            new() { Id = "Pavlova", Title = "Pavlova" },
+            new() { Id = "Carnarvon Tigers", Title = "Carnarvon Tigers" },
+            new() { Id = "Teatime Chocolate Biscuits", Title = "Teatime Chocolate Biscuits" },
+            new() { Id = "Sir Rodney's Marmalade", Title = "Sir Rodney's Marmalade" },
+            new() { Id = "Sir Rodney's Scones", Title = "Sir Rodney's Scones" },
+            new() { Id = "Gustaf's Knäckebröd", Title = "Gustaf's Knäckebröd" },
+            new() { Id = "Tunnbröd", Title = "Tunnbröd" },
+            new() { Id = "NuNuCa Nuß-Nougat-Creme", Title = "NuNuCa Nuß-Nougat-Creme" },
+            new() { Id = "Gumbär Gummibärchen", Title = "Gumbär Gummibärchen" },
+            new() { Id = "Schoggi Schokolade", Title = "Schoggi Schokolade" },
+            new() { Id = "Nord-Ost Matjeshering", Title = "Nord-Ost Matjeshering" },
+            new() { Id = "Gorgonzola Telino", Title = "Gorgonzola Telino" },
+            new() { Id = "Mascarpone Fabioli", Title = "Mascarpone Fabioli" },
+            new() { Id = "Geitost", Title = "Geitost" },
+            new() { Id = "Sasquatch Ale", Title = "Sasquatch Ale" },
+            new() { Id = "Steeleye Stout", Title = "Steeleye Stout" },
+            new() { Id = "Inlagd Sill", Title = "Inlagd Sill" },
+            new() { Id = "Gravad lax", Title = "Gravad lax" },
+            new() { Id = "Côte de Blaye", Title = "Côte de Blaye" },
+            new() { Id = "Chartreuse verte", Title = "Chartreuse verte" },
+            new() { Id = "Boston Crab Meat", Title = "Boston Crab Meat" },
+            new() { Id = "Jack's New England Clam Chowder", Title = "Jack's New England Clam Chowder" },
+            new() { Id = "Ipoh Coffee", Title = "Ipoh Coffee" },
+            new() { Id = "Gula Malacca", Title = "Gula Malacca" },
+            new() { Id = "Rogede sild", Title = "Rogede sild" },
+            new() { Id = "Spegesild", Title = "Spegesild" },
+            new() { Id = "Zaanse koeken", Title = "Zaanse koeken" },
+            new() { Id = "Chocolade", Title = "Chocolade" },
+            new() { Id = "Maxilaku", Title = "Maxilaku" },
+            new() { Id = "Valkoinen suklaa", Title = "Valkoinen suklaa" },
+            new() { Id = "Manjimup Dried Apples", Title = "Manjimup Dried Apples" },
+            new() { Id = "Filo Mix", Title = "Filo Mix" },
+            new() { Id = "Tourtière", Title = "Tourtière" },
+            new() { Id = "Pâté chinois", Title = "Pâté chinois" },
+            new() { Id = "Gnocchi di nonna Alice", Title = "Gnocchi di nonna Alice" },
+            new() { Id = "Ravioli Angelo", Title = "Ravioli Angelo" },
+            new() { Id = "Escargots de Bourgogne", Title = "Escargots de Bourgogne" },
+            new() { Id = "Raclette Courdavault", Title = "Raclette Courdavault" },
+            new() { Id = "Camembert Pierrot", Title = "Camembert Pierrot" },
+            new() { Id = "Sirop d'érable", Title = "Sirop d'érable" },
+            new() { Id = "Tarte au sucre", Title = "Tarte au sucre" },
+            new() { Id = "Vegie-spread", Title = "Vegie-spread" },
+            new() { Id = "Wimmers gute Semmelknödel", Title = "Wimmers gute Semmelknödel" },
+            new() { Id = "Louisiana Fiery Hot Pepper Sauce", Title = "Louisiana Fiery Hot Pepper Sauce" },
+            new() { Id = "Louisiana Hot Spiced Okra", Title = "Louisiana Hot Spiced Okra" },
+            new() { Id = "Laughing Lumberjack Lager", Title = "Laughing Lumberjack Lager" },
+            new() { Id = "Scottish Longbreads", Title = "Scottish Longbreads" },
+            new() { Id = "Gudbrandsdalsost", Title = "Gudbrandsdalsost" },
+            new() { Id = "Outback Lager", Title = "Outback Lager" },
+            new() { Id = "Flotemysost", Title = "Flotemysost" },
+            new() { Id = "Mozzarella di Giovanni", Title = "Mozzarella di Giovanni" },
+            new() { Id = "Röd Kaviar", Title = "Röd Kaviar" },
+            new() { Id = "Longlife Tofu", Title = "Longlife Tofu" },
+            new() { Id = "Rhönbräu Klosterbier", Title = "Rhönbräu Klosterbier" },
+            new() { Id = "Lakkalikööri", Title = "Lakkalikööri" },
+            new() { Id = "Original Frankfurter grüne Soße", Title = "Original Frankfurter grüne Soße" }
+        },
+        Edges = new List<SankeyEdge>
+        {
+            new() { Source = "Beverages", Target = "Chai", Value = 41 },
+            new() { Source = "Beverages", Target = "Chang", Value = 17 },
+            new() { Source = "Condiments", Target = "Aniseed Syrup", Value = 13 },
+            new() { Source = "Condiments", Target = "Chef Anton's Cajun Seasoning", Value = 53 },
+            new() { Source = "Condiments", Target = "Grandma's Boysenberry Spread", Value = 120 },
+            new() { Source = "Produce", Target = "Uncle Bob's Organic Dried Pears", Value = 15 },
+            new() { Source = "Condiments", Target = "Northwoods Cranberry Sauce", Value = 6 },
+            new() { Source = "Seafood", Target = "Ikura", Value = 31 },
+            new() { Source = "Dairy Products", Target = "Queso Cabrales", Value = 22 },
+            new() { Source = "Dairy Products", Target = "Queso Manchego La Pastora", Value = 86 },
+            new() { Source = "Seafood", Target = "Konbu", Value = 24 },
+            new() { Source = "Produce", Target = "Tofu", Value = 35 },
+            new() { Source = "Condiments", Target = "Genen Shouyu", Value = 39 },
+            new() { Source = "Confections", Target = "Pavlova", Value = 29 },
+            new() { Source = "Seafood", Target = "Carnarvon Tigers", Value = 42 },
+            new() { Source = "Confections", Target = "Teatime Chocolate Biscuits", Value = 25 },
+            new() { Source = "Confections", Target = "Sir Rodney's Marmalade", Value = 40 },
+            new() { Source = "Confections", Target = "Sir Rodney's Scones", Value = 3 },
+            new() { Source = "Grains-Cereals", Target = "Gustaf's Knäckebröd", Value = 104 },
+            new() { Source = "Grains-Cereals", Target = "Tunnbröd", Value = 61 },
+            new() { Source = "Confections", Target = "NuNuCa Nuß-Nougat-Creme", Value = 76 },
+            new() { Source = "Confections", Target = "Gumbär Gummibärchen", Value = 15 },
+            new() { Source = "Confections", Target = "Schoggi Schokolade", Value = 49 },
+            new() { Source = "Seafood", Target = "Nord-Ost Matjeshering", Value = 10 },
+            new() { Source = "Dairy Products", Target = "Mascarpone Fabioli", Value = 9 },
+            new() { Source = "Dairy Products", Target = "Geitost", Value = 112 },
+            new() { Source = "Beverages", Target = "Sasquatch Ale", Value = 111 },
+            new() { Source = "Beverages", Target = "Steeleye Stout", Value = 20 },
+            new() { Source = "Seafood", Target = "Inlagd Sill", Value = 112 },
+            new() { Source = "Seafood", Target = "Gravad lax", Value = 11 },
+            new() { Source = "Beverages", Target = "Côte de Blaye", Value = 17 },
+            new() { Source = "Beverages", Target = "Chartreuse verte", Value = 69 },
+            new() { Source = "Seafood", Target = "Boston Crab Meat", Value = 150 },
+            new() { Source = "Seafood", Target = "Jack's New England Clam Chowder", Value = 85 },
+            new() { Source = "Beverages", Target = "Ipoh Coffee", Value = 17 },
+            new() { Source = "Condiments", Target = "Gula Malacca", Value = 27 },
+            new() { Source = "Seafood", Target = "Rogede sild", Value = 5 },
+            new() { Source = "Seafood", Target = "Spegesild", Value = 95 },
+            new() { Source = "Confections", Target = "Zaanse koeken", Value = 36 },
+            new() { Source = "Confections", Target = "Chocolade", Value = 15 },
+            new() { Source = "Confections", Target = "Maxilaku", Value = 10 },
+            new() { Source = "Confections", Target = "Valkoinen suklaa", Value = 65 },
+            new() { Source = "Produce", Target = "Manjimup Dried Apples", Value = 20 },
+            new() { Source = "Grains-Cereals", Target = "Filo Mix", Value = 38 },
+            new() { Source = "Meat-Poultry", Target = "Tourtière", Value = 21 },
+            new() { Source = "Meat-Poultry", Target = "Pâté chinois", Value = 150 },
+            new() { Source = "Grains-Cereals", Target = "Gnocchi di nonna Alice", Value = 21 },
+            new() { Source = "Grains-Cereals", Target = "Ravioli Angelo", Value = 36 },
+            new() { Source = "Seafood", Target = "Escargots de Bourgogne", Value = 62 },
+            new() { Source = "Dairy Products", Target = "Raclette Courdavault", Value = 79 },
+            new() { Source = "Dairy Products", Target = "Camembert Pierrot", Value = 19 },
+            new() { Source = "Condiments", Target = "Sirop d'érable", Value = 150 },
+            new() { Source = "Confections", Target = "Tarte au sucre", Value = 17 },
+            new() { Source = "Condiments", Target = "Vegie-spread", Value = 24 },
+            new() { Source = "Grains-Cereals", Target = "Wimmers gute Semmelknödel", Value = 22 },
+            new() { Source = "Condiments", Target = "Louisiana Fiery Hot Pepper Sauce", Value = 76 },
+            new() { Source = "Condiments", Target = "Louisiana Hot Spiced Okra", Value = 4 },
+            new() { Source = "Beverages", Target = "Laughing Lumberjack Lager", Value = 52 },
+            new() { Source = "Confections", Target = "Scottish Longbreads", Value = 6 },
+            new() { Source = "Dairy Products", Target = "Gudbrandsdalsost", Value = 26 },
+            new() { Source = "Beverages", Target = "Outback Lager", Value = 15 },
+            new() { Source = "Dairy Products", Target = "Flotemysost", Value = 26 },
+            new() { Source = "Dairy Products", Target = "Mozzarella di Giovanni", Value = 14 },
+            new() { Source = "Seafood", Target = "Röd Kaviar", Value = 101 },
+            new() { Source = "Produce", Target = "Longlife Tofu", Value = 4 },
+            new() { Source = "Beverages", Target = "Rhönbräu Klosterbier", Value = 150 },
+            new() { Source = "Beverages", Target = "Lakkalikööri", Value = 57 },
+            new() { Source = "Condiments", Target = "Original Frankfurter grüne Soße", Value = 32 }
+        }
+    };
+
+    private SankeyOptions _options = new()
+    {
+        NodeWidth = 20,
+        FontFamily = "Quicksand, sans-serif",
+        FontWeight = "600",
+        FontSize = "10px",
+        Spacing = 20,
+        EdgeGradientFill = true
+    };
+
+    private void UpdateOptions()
+    {
+        _options = new SankeyOptions
+        {
+            NodeWidth = _nodeWidth,
+            FontFamily = "Quicksand, sans-serif",
+            FontWeight = "600",
+            FontSize = $"{_fontSizeValue}px",
+            Spacing = _spacing,
+            EdgeGradientFill = _edgeGradientFill
+        };
+    }
+
+    private void HandleNodeClick(NodeClickEventArgs args)
+    {
+        _clickedNode = $"{args.Node.Title} (ID: {args.Node.Id})";
+        StateHasChanged();
+    }
+
+    private string _codeExample = @"// handling many nodes with custom spacing
+var options = new SankeyOptions
+{
+    NodeWidth = 20,
+    FontFamily = ""Quicksand, sans-serif"",
+    FontWeight = ""600"",
+    FontSize = ""10px"",   // smaller font
+    Spacing = 20          // reduced spacing
+};
+
+// 70+ nodes with categories -> products structure
+var data = new SankeyData
+{
+    Nodes = new List<SankeyNode>
+    {
+        // 8 category nodes
+        new() { Id = ""Beverages"", Title = ""Beverages"" },
+        new() { Id = ""Condiments"", Title = ""Condiments"" },
+        // ... 6 more categories
+        
+        // 60+ product nodes
+        new() { Id = ""Chai"", Title = ""Chai"" },
+        new() { Id = ""Chang"", Title = ""Chang"" },
+        // ... many more products
+    },
+    Edges = new List<SankeyEdge>
+    {
+        new() { Source = ""Beverages"", Target = ""Chai"", Value = 41 },
+        // ... many more edges
+    }
+};";
+}
+
+<style>
+    .demo-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+    }
+
+    .description {
+        color: #666;
+        margin-bottom: 24px;
+    }
+
+    .controls-panel {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 16px;
+    }
+
+    .controls-panel h3 {
+        font-size: 0.9rem;
+        color: #1a1a2e;
+        margin-bottom: 16px;
+    }
+
+    .controls-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .control-group label {
+        font-size: 0.85rem;
+        color: #444;
+    }
+
+    .control-group input[type="range"] {
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .control-group input[type="checkbox"] {
+        margin-right: 8px;
+    }
+
+    .chart-container {
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 24px;
+    }
+
+    .event-log {
+        background: #e8f4fd;
+        border: 1px solid #b8daff;
+        border-radius: 4px;
+        padding: 12px 16px;
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+    }
+
+    .code-section {
+        background: #1a1a2e;
+        border-radius: 8px;
+        padding: 20px;
+        color: #fff;
+        margin-bottom: 16px;
+    }
+
+    .code-section h3 {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        opacity: 0.7;
+    }
+
+    .features-list {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 0.9rem;
+        line-height: 1.8;
+    }
+
+    .features-list li {
+        opacity: 0.9;
+    }
+
+    .code-section pre {
+        margin: 0;
+        overflow-x: auto;
+    }
+
+    .code-section code {
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+</style>

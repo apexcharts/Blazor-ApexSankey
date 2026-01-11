@@ -1,0 +1,315 @@
+@page "/custom-fonts"
+
+<PageTitle>Custom Fonts - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Custom Fonts</h1>
+    <p class="description">Job application flow with custom font styling and manual node ordering.</p>
+
+    <div class="controls-panel">
+        <h3>Interactive Controls</h3>
+        <div class="controls-grid">
+            <div class="control-group">
+                <label>Font Family:</label>
+                <select @bind="_fontFamily" @bind:event="onchange" @bind:after="UpdateOptions">
+                    <option value="Satisfy, cursive">Satisfy (Cursive)</option>
+                    <option value="Quicksand, sans-serif">Quicksand</option>
+                    <option value="Arial, sans-serif">Arial</option>
+                    <option value="Georgia, serif">Georgia</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Font Size: @_fontSize</label>
+                <input type="range" min="10" max="28" @bind="_fontSizeValue" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <label>Font Color:</label>
+                <input type="color" @bind="_fontColor" @bind:event="onchange" @oninput="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <label>Node Width: @_nodeWidth px</label>
+                <input type="range" min="5" max="30" @bind="_nodeWidth" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data"
+                    Options="@_options"
+                    OnNodeClick="@HandleNodeClick"
+                    Style="margin: 0 auto; width: 800px; height: 700px;" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(_clickedNode))
+    {
+        <div class="event-log">
+            <strong>Last clicked:</strong> @_clickedNode
+        </div>
+    }
+
+    <div class="code-section">
+        <h3>Key Features</h3>
+        <ul class="features-list">
+            <li>Custom Google Font (Satisfy)</li>
+            <li>Custom font color (#E37816)</li>
+            <li>Manual node ordering with layers and bands</li>
+            <li>Custom edge colors to highlight flow paths</li>
+        </ul>
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_codeExample</code></pre>
+    </div>
+</div>
+
+@code {
+    private string? _clickedNode;
+    
+    // interactive control values
+    private string _fontFamily = "Satisfy, cursive";
+    private int _fontSizeValue = 20;
+    private string _fontSize => $"{_fontSizeValue}px";
+    private string _fontColor = "#E37816";
+    private int _nodeWidth = 10;
+
+    private SankeyData _data = new()
+    {
+        Nodes = new List<SankeyNode>
+        {
+            new() { Id = "Berlin", Title = "Berlin" },
+            new() { Id = "Job Applications", Title = "Job Applications" },
+            new() { Id = "Barcelona", Title = "Barcelona" },
+            new() { Id = "Madrid", Title = "Madrid" },
+            new() { Id = "Amsterdam", Title = "Amsterdam" },
+            new() { Id = "Paris", Title = "Paris" },
+            new() { Id = "London", Title = "London" },
+            new() { Id = "Munich", Title = "Munich" },
+            new() { Id = "Brussels", Title = "Brussels" },
+            new() { Id = "Dubai", Title = "Dubai" },
+            new() { Id = "Dublin", Title = "Dublin" },
+            new() { Id = "Other Cities", Title = "Other Cities" },
+            new() { Id = "No Response", Title = "No Response" },
+            new() { Id = "Responded", Title = "Responded" },
+            new() { Id = "Rejected", Title = "Rejected" },
+            new() { Id = "Interviewed", Title = "Interviewed" },
+            new() { Id = "No Offer", Title = "No Offer" },
+            new() { Id = "Declined Offer", Title = "Declined Offer" },
+            new() { Id = "Accepted Offer", Title = "Accepted Offer" }
+        },
+        Edges = new List<SankeyEdge>
+        {
+            new() { Source = "Berlin", Target = "Job Applications", Value = 102, Color = "#dddddd" },
+            new() { Source = "Barcelona", Target = "Job Applications", Value = 39, Color = "#dddddd" },
+            new() { Source = "Madrid", Target = "Job Applications", Value = 35, Color = "#dddddd" },
+            new() { Source = "Amsterdam", Target = "Job Applications", Value = 15, Color = "#dddddd" },
+            new() { Source = "Paris", Target = "Job Applications", Value = 14, Color = "#dddddd" },
+            new() { Source = "London", Target = "Job Applications", Value = 6, Color = "#dddddd" },
+            new() { Source = "Munich", Target = "Job Applications", Value = 5, Color = "#dddddd" },
+            new() { Source = "Brussels", Target = "Job Applications", Value = 4, Color = "#dddddd" },
+            new() { Source = "Dubai", Target = "Job Applications", Value = 3, Color = "#dddddd" },
+            new() { Source = "Dublin", Target = "Job Applications", Value = 3, Color = "#dddddd" },
+            new() { Source = "Other Cities", Target = "Job Applications", Value = 12, Color = "#dddddd" },
+            new() { Source = "Job Applications", Target = "No Response", Value = 189, Color = "#dddddd" },
+            new() { Source = "Job Applications", Target = "Responded", Value = 49, Color = "orange" },
+            new() { Source = "Responded", Target = "Rejected", Value = 38, Color = "#dddddd" },
+            new() { Source = "Responded", Target = "Interviewed", Value = 11, Color = "orange" },
+            new() { Source = "Interviewed", Target = "No Offer", Value = 8, Color = "#dddddd" },
+            new() { Source = "Interviewed", Target = "Declined Offer", Value = 2, Color = "#dddddd" },
+            new() { Source = "Interviewed", Target = "Accepted Offer", Value = 1, Color = "orange" }
+        },
+        Options = new SankeyDataOptions
+        {
+            Order = new List<List<List<string>>>
+            {
+                new() 
+                { 
+                    new() { "Berlin", "Barcelona", "Madrid", "Amsterdam", "Paris", "London" },
+                    new() { "Munich", "Brussels", "Dubai", "Dublin", "Other Cities" }
+                },
+                new() { new() { "Job Applications" } },
+                new() { new() { "Responded" }, new() { "No Response" } },
+                new() { new() { "Interviewed" }, new() { "Rejected" } },
+                new() { new() { "Accepted Offer", "Declined Offer", "No Offer" }, new() { } }
+            }
+        }
+    };
+
+    private SankeyOptions _options = new()
+    {
+        NodeWidth = 10,
+        FontSize = "20px",
+        FontFamily = "Satisfy, cursive",
+        FontWeight = "600",
+        FontColor = "#E37816"
+    };
+
+    private void UpdateOptions()
+    {
+        _options = new SankeyOptions
+        {
+            NodeWidth = _nodeWidth,
+            FontSize = _fontSize,
+            FontFamily = _fontFamily,
+            FontWeight = "600",
+            FontColor = _fontColor
+        };
+    }
+
+    private void HandleNodeClick(NodeClickEventArgs args)
+    {
+        _clickedNode = $"{args.Node.Title} (ID: {args.Node.Id})";
+        StateHasChanged();
+    }
+
+    private string _codeExample = @"// custom ordering structure: layers -> bands -> node ids
+Options = new SankeyDataOptions
+{
+    Order = new List<List<List<string>>>
+    {
+        // layer 0: two bands of cities
+        new() 
+        { 
+            new() { ""Berlin"", ""Barcelona"", ""Madrid"", ""Amsterdam"", ""Paris"", ""London"" },
+            new() { ""Munich"", ""Brussels"", ""Dubai"", ""Dublin"", ""Other Cities"" }
+        },
+        // layer 1: single node
+        new() { new() { ""Job Applications"" } },
+        // layer 2: response status
+        new() { new() { ""Responded"" }, new() { ""No Response"" } },
+        // ...
+    }
+}
+
+var options = new SankeyOptions
+{
+    NodeWidth = 10,
+    FontSize = ""20px"",
+    FontFamily = ""Satisfy, cursive"",
+    FontWeight = ""600"",
+    FontColor = ""#E37816""
+};";
+}
+
+<style>
+    .demo-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+    }
+
+    .description {
+        color: #666;
+        margin-bottom: 24px;
+    }
+
+    .controls-panel {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 16px;
+    }
+
+    .controls-panel h3 {
+        font-size: 0.9rem;
+        color: #1a1a2e;
+        margin-bottom: 16px;
+    }
+
+    .controls-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .control-group label {
+        font-size: 0.85rem;
+        color: #444;
+    }
+
+    .control-group input[type="range"] {
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .control-group input[type="color"] {
+        width: 60px;
+        height: 30px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .control-group select {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    .chart-container {
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 24px;
+    }
+
+    .event-log {
+        background: #e8f4fd;
+        border: 1px solid #b8daff;
+        border-radius: 4px;
+        padding: 12px 16px;
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+    }
+
+    .code-section {
+        background: #1a1a2e;
+        border-radius: 8px;
+        padding: 20px;
+        color: #fff;
+        margin-bottom: 16px;
+    }
+
+    .code-section h3 {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        opacity: 0.7;
+    }
+
+    .features-list {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 0.9rem;
+        line-height: 1.8;
+    }
+
+    .features-list li {
+        opacity: 0.9;
+    }
+
+    .code-section pre {
+        margin: 0;
+        overflow-x: auto;
+    }
+
+    .code-section code {
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+</style>

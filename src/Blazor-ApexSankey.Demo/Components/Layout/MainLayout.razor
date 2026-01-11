@@ -1,0 +1,109 @@
+@inherits LayoutComponentBase
+
+<div class="layout">
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>Blazor-ApexSankey</h2>
+            <span class="version">v1.0.0</span>
+        </div>
+        <ul class="nav-menu">
+            <li><NavLink href="" Match="NavLinkMatch.All">Home</NavLink></li>
+            <li class="nav-section">Examples</li>
+            <li><NavLink href="basic-sankey">Basic Sankey</NavLink></li>
+            <li><NavLink href="custom-fonts">Custom Fonts</NavLink></li>
+            <li><NavLink href="alternate-node">Alternate Node</NavLink></li>
+            <li><NavLink href="node-customization">Node Customization</NavLink></li>
+            <li><NavLink href="node-overlapping">Node Overlapping</NavLink></li>
+            <li><NavLink href="edge-options">Edge Options</NavLink></li>
+            <li><NavLink href="tooltip">Tooltip Customization</NavLink></li>
+        </ul>
+    </nav>
+    <main class="content">
+        @Body
+    </main>
+</div>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        background: #f5f5f5;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        width: 240px;
+        background: #1a1a2e;
+        color: #fff;
+        padding: 20px 0;
+        flex-shrink: 0;
+    }
+
+    .sidebar-header {
+        padding: 0 20px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        margin-bottom: 20px;
+    }
+
+    .sidebar-header h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .version {
+        font-size: 0.75rem;
+        opacity: 0.6;
+    }
+
+    .nav-menu {
+        list-style: none;
+    }
+
+    .nav-menu li {
+        margin: 2px 0;
+    }
+
+    .nav-section {
+        padding: 16px 20px 8px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.5;
+    }
+
+    .nav-menu a {
+        display: block;
+        padding: 10px 20px;
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.15s ease;
+    }
+
+    .nav-menu a:hover {
+        background: rgba(255,255,255,0.05);
+        color: #fff;
+    }
+
+    .nav-menu a.active {
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        border-left: 3px solid #4f8cff;
+    }
+
+    .content {
+        flex: 1;
+        padding: 32px;
+        overflow-x: auto;
+    }
+</style>
