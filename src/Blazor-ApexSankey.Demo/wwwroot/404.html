@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blazor-ApexSankey Demo</title>
+    <!-- Base href is "/" for local development, but will be replaced during GitHub Pages deployment -->
+    <base href="/" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+
+    <!-- Google Fonts for demos -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="text/javascript">
+      // Single Page Apps for GitHub Pages
+      // https://github.com/rafgraph/spa-github-pages
+      (function (l) {
+        if (l.search[1] === "/") {
+          var decoded = l.search
+            .slice(1)
+            .split("&")
+            .map(function (s) {
+              return s.replace(/~and~/g, "&");
+            })
+            .join("?");
+          window.history.replaceState(
+            null,
+            null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      })(window.location);
+    </script>
+  </head>
+
+  <body>
+    <div id="app">
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          font-family: sans-serif;
+        "
+      >
+        <div style="text-align: center">
+          <div style="margin-bottom: 16px">Loading...</div>
+          <div
+            style="
+              width: 200px;
+              height: 4px;
+              background: #e0e0e0;
+              border-radius: 2px;
+              overflow: hidden;
+            "
+          >
+            <div
+              style="
+                width: 30%;
+                height: 100%;
+                background: #4f8cff;
+                animation: loading 1.5s infinite;
+              "
+            ></div>
+          </div>
+        </div>
+      </div>
+      <style>
+        @keyframes loading {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(400%);
+          }
+        }
+      </style>
+    </div>
+
+    <div
+      id="blazor-error-ui"
+      style="
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 16px;
+        background: #ffdddd;
+        color: #900;
+      "
+    >
+      An unhandled error has occurred.
+      <a href="" style="color: #900">Reload</a>
+      <a
+        href="#"
+        onclick="document.getElementById('blazor-error-ui').style.display='none';return false;"
+        style="color: #900; margin-left: 16px"
+        >Dismiss</a
+      >
+    </div>
+
+    <!-- svg.js dependency -->
+    <script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js"></script>
+
+    <!-- apexsankey library -->
+    <script src="_content/Blazor-ApexSankey/apexsankey.min.js"></script>
+
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script>
+      // wait for ApexSankey to be available, then start Blazor
+      function waitForApexSankey(callback, maxWait = 5000) {
+        const start = Date.now();
+        const check = () => {
+          if (typeof window.ApexSankey !== "undefined") {
+            callback();
+          } else if (Date.now() - start < maxWait) {
+            setTimeout(check, 50);
+          } else {
+            console.warn(
+              "ApexSankey not found as global, starting Blazor anyway"
+            );
+            callback();
+          }
+        };
+        check();
+      }
+
+      waitForApexSankey(() => {
+        Blazor.start();
+      });
+    </script>
+  </body>
+</html>
