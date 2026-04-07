@@ -35,9 +35,10 @@ In your `index.html`, add the svg.js dependency before the Blazor script:
 In your `_Imports.razor`:
 
 ```razor
-@using Blazor-ApexSankey
-@using Blazor-ApexSankey.Components
-@using Blazor-ApexSankey.Models
+@using Blazor_ApexSankey.Components
+@using Blazor_ApexSankey.Models
+@using Blazor_ApexSankey.Events
+@using Blazor_ApexSankey.Services
 ```
 
 ### 3. Use the component
@@ -84,10 +85,10 @@ In your `_Imports.razor`:
 
 | Option               | Type     | Default     | Description                |
 | -------------------- | -------- | ----------- | -------------------------- |
-| `Width`              | `string` | `"800"`     | Container width            |
-| `Height`             | `string` | `"800"`     | Container height           |
+| `Width`              | `string` | `"100%"`    | Container width            |
+| `Height`             | `string` | `"auto"`    | Container height           |
 | `CanvasStyle`        | `string` | `null`      | CSS styles for canvas      |
-| `Spacing`            | `int`    | `100`       | Top/left spacing           |
+| `Spacing`            | `int`    | `20`        | Horizontal spacing between node columns |
 | `NodeWidth`          | `int`    | `20`        | Width of nodes             |
 | `NodeBorderWidth`    | `int`    | `1`         | Node border width          |
 | `NodeBorderColor`    | `string` | `null`      | Node border color          |
