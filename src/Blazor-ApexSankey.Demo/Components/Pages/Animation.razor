@@ -1,0 +1,70 @@
+@page "/animation"
+
+<PageTitle>Animation - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Entrance Animation</h1>
+    <p class="description">Nodes and edges animate in on initial render (apexsankey 1.6+). Tune the duration or toggle it off, then replay.</p>
+
+    <div class="controls-panel">
+        <h3>Interactive Controls</h3>
+        <div class="controls-grid">
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" @bind="_enabled" @bind:event="onchange" @onclick="UpdateOptions" />
+                    Animation Enabled
+                </label>
+            </div>
+            <div class="control-group">
+                <label>Duration: @_duration ms</label>
+                <input type="range" min="200" max="2000" step="100" @bind="_duration" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+            <div class="control-group">
+                <button @onclick="Replay">Replay animation</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data" Options="@_options" Style="margin: 0 auto; width: 800px; height: 500px;" />
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_codeExample</code></pre>
+    </div>
+</div>
+
+@code {
+    private bool _enabled = true;
+    private int _duration = 800;
+
+    private readonly SankeyData _data = DemoData.Flows();
+
+    private SankeyOptions _options = new()
+    {
+        NodeWidth = 20,
+        Animation = new SankeyAnimation { Enabled = true, Duration = 800 }
+    };
+
+    private void UpdateOptions()
+    {
+        _options = new SankeyOptions
+        {
+            NodeWidth = 20,
+            Animation = new SankeyAnimation { Enabled = _enabled, Duration = _duration }
+        };
+    }
+
+    // Rebuilding the options instance re-initializes the chart, which replays the entrance animation.
+    private void Replay() => UpdateOptions();
+
+    private readonly string _codeExample = @"var options = new SankeyOptions
+{
+    Animation = new SankeyAnimation
+    {
+        Enabled = true,
+        Duration = 800   // milliseconds
+    }
+};";
+}

@@ -1,0 +1,73 @@
+@page "/locale"
+
+<PageTitle>Localization & RTL - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Localization &amp; RTL</h1>
+    <p class="description">The <code>Locale</code> option controls text direction and screen-reader strings (apexsankey 1.9+). Switch to RTL to mirror the whole diagram.</p>
+
+    <div class="controls-panel">
+        <h3>Interactive Controls</h3>
+        <div class="controls-grid">
+            <div class="control-group">
+                <label>Direction</label>
+                <select @bind="_direction" @bind:after="UpdateOptions">
+                    <option value="ltr">ltr (left to right)</option>
+                    <option value="rtl">rtl (right to left)</option>
+                    <option value="auto">auto</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Nodes group aria-label</label>
+                <input type="text" @bind="_nodesGroupLabel" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data" Options="@_options" Style="margin: 0 auto; width: 800px; height: 500px;" />
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_codeExample</code></pre>
+    </div>
+</div>
+
+@code {
+    private string _direction = "ltr";
+    private string _nodesGroupLabel = "Energy nodes";
+
+    private readonly SankeyData _data = DemoData.Flows();
+
+    private SankeyOptions _options = new()
+    {
+        NodeWidth = 20,
+        Locale = new SankeyLocale { Direction = "ltr" }
+    };
+
+    private void UpdateOptions()
+    {
+        _options = new SankeyOptions
+        {
+            NodeWidth = 20,
+            Locale = new SankeyLocale
+            {
+                Direction = _direction,
+                Messages = new Dictionary<string, string> { ["nodesGroupLabel"] = _nodesGroupLabel }
+            }
+        };
+    }
+
+    private readonly string _codeExample = @"var options = new SankeyOptions
+{
+    Locale = new SankeyLocale
+    {
+        Direction = ""rtl"",
+        Messages = new Dictionary<string, string>
+        {
+            [""nodesGroupLabel""] = ""Energy nodes""
+        }
+    }
+};";
+}
