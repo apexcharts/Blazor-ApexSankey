@@ -23,10 +23,9 @@ dotnet add package Blazor-ApexSankey
 
 ### 1. Add the script reference
 
-In your `index.html`, add the svg.js dependency before the Blazor script:
+The core library is self-contained (no external dependencies), so the standard Blazor script is all you need in your `index.html`:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js"></script>
 <script src="_framework/blazor.webassembly.js"></script>
 ```
 

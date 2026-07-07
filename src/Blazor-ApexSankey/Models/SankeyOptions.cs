@@ -73,6 +73,12 @@ public class SankeyOptions
     [JsonPropertyName("edgeGradientFill")]
     public bool? EdgeGradientFill { get; set; }
 
+    /// <summary>
+    /// pixel gap between adjacent edges at a node connection point (default: 0)
+    /// </summary>
+    [JsonPropertyName("edgeGap")]
+    public int? EdgeGap { get; set; }
+
     // font options
 
     /// <summary>
@@ -131,4 +137,74 @@ public class SankeyOptions
     /// </summary>
     [JsonPropertyName("tooltipBGColor")]
     public string? TooltipBGColor { get; set; }
+
+    // interaction options
+
+    /// <summary>
+    /// when true, hovering a node or edge highlights the connected flow path (default: true)
+    /// </summary>
+    [JsonPropertyName("highlightConnectedPath")]
+    public bool? HighlightConnectedPath { get; set; }
+
+    /// <summary>
+    /// opacity for dimmed (unrelated) elements when path highlighting is active (default: 0.15)
+    /// </summary>
+    [JsonPropertyName("dimOpacity")]
+    public double? DimOpacity { get; set; }
+
+    // animation options
+
+    /// <summary>
+    /// entrance animation settings for nodes and edges on initial render
+    /// </summary>
+    [JsonPropertyName("animation")]
+    public SankeyAnimation? Animation { get; set; }
+
+    // localization options
+
+    /// <summary>
+    /// localization and text-direction (RTL) settings
+    /// </summary>
+    [JsonPropertyName("locale")]
+    public SankeyLocale? Locale { get; set; }
+}
+
+/// <summary>
+/// entrance animation settings for the sankey diagram
+/// </summary>
+public class SankeyAnimation
+{
+    /// <summary>
+    /// whether the entrance animation is enabled. automatically disabled when the
+    /// user's prefers-reduced-motion setting is on (default: true)
+    /// </summary>
+    [JsonPropertyName("enabled")]
+    public bool? Enabled { get; set; }
+
+    /// <summary>
+    /// total duration of the animation in milliseconds (default: 800)
+    /// </summary>
+    [JsonPropertyName("duration")]
+    public int? Duration { get; set; }
+}
+
+/// <summary>
+/// localization and text-direction options for the sankey diagram
+/// </summary>
+public class SankeyLocale
+{
+    /// <summary>
+    /// text and layout direction. "rtl" mirrors the diagram horizontally and sets
+    /// dir="rtl" on the container; "auto" defers to the document/element direction.
+    /// accepts "ltr", "rtl", or "auto" (default: "ltr")
+    /// </summary>
+    [JsonPropertyName("direction")]
+    public string? Direction { get; set; }
+
+    /// <summary>
+    /// overrides for screen-reader strings, keyed by message name (e.g. "nodesGroupLabel").
+    /// unset keys keep their English defaults.
+    /// </summary>
+    [JsonPropertyName("messages")]
+    public Dictionary<string, string>? Messages { get; set; }
 }
