@@ -23,7 +23,8 @@
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Copyright>Copyright © ApexCharts 2025</Copyright>
-    
+    <PackageReleaseNotes>1.0.0 First stable release. Upgrades the bundled apexsankey core to 1.9.0 and ports the new options and API surface into the C# model.</PackageReleaseNotes>
+
     <!-- Package Settings -->
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
