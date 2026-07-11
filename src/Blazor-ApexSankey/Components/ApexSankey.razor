@@ -102,6 +102,13 @@
             _dotNetRef = DotNetObjectReference.Create(this);
             _lastDataHash = ComputeHash(Data, Options);
 
+            // apply the license (if configured) before creating any chart, so the
+            // watermark is removed on the very first render
+            if (ApexSankeyLicense.HasLicense)
+            {
+                await _module.InvokeVoidAsync("setLicense", ApexSankeyLicense.LicenseKey);
+            }
+
             var options = SerializeOptions();
             var data = SerializeData();
 
