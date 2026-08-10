@@ -10,7 +10,7 @@
     
     <!-- NuGet Package Configuration -->
     <PackageId>Blazor-ApexSankey</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Authors>ApexCharts</Authors>
     <Company>ApexCharts</Company>
     <Product>Blazor-ApexSankey</Product>
@@ -23,7 +23,7 @@
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Copyright>Copyright © ApexCharts 2025</Copyright>
-    <PackageReleaseNotes>1.0.0 First stable release. Upgrades the bundled apexsankey core to 1.9.0 and ports the new options and API surface into the C# model.</PackageReleaseNotes>
+    <PackageReleaseNotes>1.1.0 Upgrades the bundled apexsankey core to 1.11.0 (the animated relaunch: spring relayout and data morph, focus/isolate, draggable nodes, particle flow, vertical orientation, circular links, alluvial and chord projections, theming, a plugin API, and comparison split-view). The upgrade is non-breaking: existing options keep working. The new core capabilities are available at the JS layer and can be surfaced in the C# model in a follow-up.</PackageReleaseNotes>
 
     <!-- Package Settings -->
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
