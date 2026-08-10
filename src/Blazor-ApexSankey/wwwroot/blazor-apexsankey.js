@@ -97,9 +97,12 @@ export async function create(elementId, options, data, dotNetRef) {
     // get the ApexSankey constructor
     const ApexSankey = await getApexSankeyConstructor();
 
+    // separate the Blazor-only `plugins` config from the core chart options
+    const { plugins, ...coreOptions } = options || {};
+
     // merge options with node click callback
     const mergedOptions = {
-      ...options,
+      ...coreOptions,
       onNodeClick: (node) => {
         if (dotNetRef) {
           dotNetRef.invokeMethodAsync("OnNodeClickCallback", {
@@ -111,21 +114,33 @@ export async function create(elementId, options, data, dotNetRef) {
       },
     };
 
-    // handle tooltip template if it's a string function
-    if (
-      options.tooltipTemplate &&
-      typeof options.tooltipTemplate === "string"
-    ) {
-      try {
-        mergedOptions.tooltipTemplate = eval(`(${options.tooltipTemplate})`);
-      } catch (e) {
-        console.error("failed to parse tooltip template:", e);
+    // template options arrive as function-source strings; turn them back into functions
+    for (const key of ["tooltipTemplate", "nodeTooltipTemplate"]) {
+      if (coreOptions[key] && typeof coreOptions[key] === "string") {
+        try {
+          mergedOptions[key] = eval(`(${coreOptions[key]})`);
+        } catch (e) {
+          console.error(`failed to parse ${key}:`, e);
+        }
       }
     }
 
     // create the chart instance
     const sankey = new ApexSankey(element, mergedOptions);
     sankey.render(data);
+
+    // install any configured built-in plugins (path tracing, time playback, drill-down)
+    if (plugins && ApexSankey.plugins) {
+      if (plugins.pathTrace) {
+        sankey.use(ApexSankey.plugins.pathTrace(plugins.pathTrace));
+      }
+      if (plugins.timePlayback) {
+        sankey.use(ApexSankey.plugins.timePlayback(plugins.timePlayback));
+      }
+      if (plugins.drillDown) {
+        sankey.use(ApexSankey.plugins.drillDown(plugins.drillDown));
+      }
+    }
 
     // store reference
     chartInstances.set(elementId, {
@@ -176,6 +191,19 @@ export function destroy(elementId) {
   try {
     const chartData = chartInstances.get(elementId);
     if (chartData) {
+      // run the library teardown first (plugin teardowns, event handlers, and
+      // the injected tooltip DOM), then clear the container as a fallback
+      if (
+        chartData.instance &&
+        typeof chartData.instance.destroy === "function"
+      ) {
+        try {
+          chartData.instance.destroy();
+        } catch (e) {
+          console.error("error during ApexSankey instance destroy:", e);
+        }
+      }
+
       // clear the container
       const element = document.getElementById(elementId);
       if (element) {

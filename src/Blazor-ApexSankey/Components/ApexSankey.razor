@@ -180,7 +180,11 @@
         return JsonSerializer.Deserialize<Dictionary<string, object?>>(
             JsonSerializer.Serialize(Options, new JsonSerializerOptions
             {
-                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+                // camelCase so nested plugin/theme configs (which reuse the node/edge
+                // models) serialize to the JS names; explicit [JsonPropertyName]
+                // attributes on the option properties still take precedence.
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             })) ?? new Dictionary<string, object?>();
     }
 
