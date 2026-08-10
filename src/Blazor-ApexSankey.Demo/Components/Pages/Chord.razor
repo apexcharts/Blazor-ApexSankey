@@ -1,0 +1,71 @@
+@page "/chord"
+
+<PageTitle>Chord Diagram - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Chord Diagram</h1>
+    <p class="description">
+        The radial projection of the same node and edge model. Set <code>Type = "chord"</code> to render nodes as arcs on
+        a ring with ribbons across the interior, ideal for dense many-to-many relationships. Arc outer corners are rounded
+        via <code>ArcCornerRadius</code>.
+    </p>
+
+    <div class="controls-panel">
+        <h3>Options</h3>
+        <div class="controls-row">
+            <div class="control-group">
+                <label>Arc corner radius: @_cornerRadius px</label>
+                <input type="range" min="0" max="16" @bind="_cornerRadius" @bind:event="oninput" @onchange="UpdateOptions" />
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data" Options="@_options" Style="margin: 0 auto; width: 700px; height: 560px;" />
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_code</code></pre>
+    </div>
+</div>
+
+@code {
+    private int _cornerRadius = 6;
+
+    private readonly SankeyData _data = new()
+    {
+        Nodes = new List<SankeyNode>
+        {
+            new() { Id = "North", Title = "North" },
+            new() { Id = "South", Title = "South" },
+            new() { Id = "East", Title = "East" },
+            new() { Id = "West", Title = "West" },
+            new() { Id = "Central", Title = "Central" },
+        },
+        Edges = new List<SankeyEdge>
+        {
+            new() { Source = "North", Target = "South", Value = 12 },
+            new() { Source = "North", Target = "East", Value = 8 },
+            new() { Source = "South", Target = "West", Value = 9 },
+            new() { Source = "East", Target = "Central", Value = 7 },
+            new() { Source = "West", Target = "North", Value = 6 },
+            new() { Source = "Central", Target = "South", Value = 10 },
+            new() { Source = "East", Target = "West", Value = 5 },
+            new() { Source = "Central", Target = "North", Value = 8 },
+        }
+    };
+
+    private SankeyOptions _options = new() { Type = "chord", ArcCornerRadius = 6, Height = "560" };
+
+    private void UpdateOptions()
+    {
+        _options = new SankeyOptions { Type = "chord", ArcCornerRadius = _cornerRadius, Height = "560" };
+    }
+
+    private readonly string _code = @"var options = new SankeyOptions
+{
+    Type = ""chord"",
+    ArcCornerRadius = 6
+};";
+}

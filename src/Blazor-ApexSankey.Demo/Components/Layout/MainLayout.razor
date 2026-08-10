@@ -4,10 +4,20 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <h2>Blazor-ApexSankey</h2>
-            <span class="version">v1.0.0</span>
+            <span class="version">v1.2.0</span>
         </div>
         <ul class="nav-menu">
             <li><NavLink href="" Match="NavLinkMatch.All">Home</NavLink></li>
+            <li class="nav-section">New in 1.11.0</li>
+            <li><NavLink href="chord">Chord Diagram</NavLink></li>
+            <li><NavLink href="themes">Themes</NavLink></li>
+            <li><NavLink href="vertical-orientation">Vertical Orientation</NavLink></li>
+            <li><NavLink href="particle-flow">Particle Flow</NavLink></li>
+            <li><NavLink href="circular-links">Circular Links</NavLink></li>
+            <li><NavLink href="draggable-nodes">Draggable Nodes</NavLink></li>
+            <li><NavLink href="drill-down">Drill-down</NavLink></li>
+            <li><NavLink href="time-playback">Time Playback</NavLink></li>
+            <li><NavLink href="path-tracing">Path Tracing</NavLink></li>
             <li class="nav-section">Examples</li>
             <li><NavLink href="basic-sankey">Basic Sankey</NavLink></li>
             <li><NavLink href="custom-fonts">Custom Fonts</NavLink></li>
@@ -107,5 +117,106 @@
         flex: 1;
         padding: 32px;
         overflow-x: auto;
+    }
+
+    /* Shared demo-page styles (used by the newer example pages). */
+    .demo-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .demo-page h1 {
+        font-size: 1.75rem;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+    }
+
+    .demo-page .description {
+        color: #666;
+        margin-bottom: 24px;
+    }
+
+    .demo-page .controls-panel {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 16px;
+    }
+
+    .demo-page .controls-panel h3 {
+        font-size: 0.9rem;
+        color: #1a1a2e;
+        margin-bottom: 16px;
+    }
+
+    .demo-page .controls-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .demo-page .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .demo-page .control-group label {
+        font-size: 0.85rem;
+        color: #444;
+    }
+
+    .demo-page select,
+    .demo-page button {
+        font: inherit;
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background: #fff;
+        cursor: pointer;
+    }
+
+    .demo-page .chart-container {
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        margin-bottom: 24px;
+    }
+
+    .demo-page .event-log {
+        background: #e8f4fd;
+        border: 1px solid #b8daff;
+        border-radius: 4px;
+        padding: 12px 16px;
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+    }
+
+    .demo-page .code-section {
+        background: #1a1a2e;
+        border-radius: 8px;
+        padding: 20px;
+        color: #fff;
+    }
+
+    .demo-page .code-section h3 {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        opacity: 0.7;
+    }
+
+    .demo-page .code-section pre {
+        margin: 0;
+        overflow-x: auto;
+    }
+
+    .demo-page .code-section code {
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.8rem;
+        line-height: 1.5;
     }
 </style>

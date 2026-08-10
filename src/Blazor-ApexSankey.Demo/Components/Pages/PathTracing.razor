@@ -1,0 +1,97 @@
+@page "/path-tracing"
+
+<PageTitle>Path Tracing - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Path Tracing</h1>
+    <p class="description">
+        The <code>PathTrace</code> plugin sends a comet pulse cascading along the flow path from the node you pick, layered
+        on top of the built-in connected-path highlight. Configure it through <code>Options.Plugins.PathTrace</code>.
+        <strong>Click a node</strong> to trace its downstream path.
+    </p>
+
+    <div class="controls-panel">
+        <h3>Options</h3>
+        <div class="controls-row">
+            <div class="control-group">
+                <label>Direction</label>
+                <select @bind="_direction" @bind:after="UpdateOptions">
+                    <option value="downstream">downstream</option>
+                    <option value="upstream">upstream</option>
+                    <option value="both">both</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data" Options="@_options" Style="margin: 0 auto; width: 820px; height: 520px;" />
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_code</code></pre>
+    </div>
+</div>
+
+@code {
+    private string _direction = "downstream";
+
+    private readonly SankeyData _data = new()
+    {
+        Nodes = new List<SankeyNode>
+        {
+            new() { Id = "Farms", Title = "Farms", Color = "#84cc16" },
+            new() { Id = "Mills", Title = "Mills", Color = "#ca8a04" },
+            new() { Id = "Packing", Title = "Packing", Color = "#22c55e" },
+            new() { Id = "Retail", Title = "Retail", Color = "#3b82f6" },
+            new() { Id = "Export", Title = "Export", Color = "#a855f7" },
+            new() { Id = "Homes", Title = "Homes", Color = "#10b981" },
+        },
+        Edges = new List<SankeyEdge>
+        {
+            new() { Source = "Farms", Target = "Mills", Value = 60 },
+            new() { Source = "Farms", Target = "Packing", Value = 40 },
+            new() { Source = "Mills", Target = "Retail", Value = 35 },
+            new() { Source = "Mills", Target = "Export", Value = 25 },
+            new() { Source = "Packing", Target = "Retail", Value = 25 },
+            new() { Source = "Packing", Target = "Export", Value = 15 },
+            new() { Source = "Retail", Target = "Homes", Value = 60 },
+        }
+    };
+
+    private SankeyOptions _options = BuildOptions("downstream");
+
+    private static SankeyOptions BuildOptions(string direction) => new()
+    {
+        Height = "520",
+        HighlightConnectedPath = true,
+        Plugins = new SankeyPlugins
+        {
+            PathTrace = new PathTracePlugin
+            {
+                Trigger = "click",
+                Direction = direction,
+                Color = "#e11d48",
+                Duration = 650,
+                Stagger = 190
+            }
+        }
+    };
+
+    private void UpdateOptions() => _options = BuildOptions(_direction);
+
+    private readonly string _code = @"var options = new SankeyOptions
+{
+    HighlightConnectedPath = true,
+    Plugins = new SankeyPlugins
+    {
+        PathTrace = new PathTracePlugin
+        {
+            Trigger = ""click"",
+            Direction = ""downstream"",
+            Color = ""#e11d48""
+        }
+    }
+};";
+}

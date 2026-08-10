@@ -1,0 +1,49 @@
+@page "/particle-flow"
+
+<PageTitle>Particle Flow - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Particle Flow</h1>
+    <p class="description">
+        Set <code>ParticleFlow = true</code> to animate particles drifting along each ribbon, with density proportional to
+        the flow value. It is purely decorative and is skipped automatically under <code>prefers-reduced-motion</code>.
+    </p>
+
+    <div class="controls-panel">
+        <h3>Options</h3>
+        <div class="controls-row">
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" @bind="_particleFlow" @bind:after="UpdateOptions" />
+                    Particle flow
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data" Options="@_options" Style="margin: 0 auto; width: 800px; height: 500px;" />
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_code</code></pre>
+    </div>
+</div>
+
+@code {
+    private bool _particleFlow = true;
+    private readonly SankeyData _data = DemoData.EnergyMix();
+
+    private SankeyOptions _options = new() { ParticleFlow = true, EdgeGradientFill = true, Height = "500" };
+
+    private void UpdateOptions()
+    {
+        _options = new SankeyOptions { ParticleFlow = _particleFlow, EdgeGradientFill = true, Height = "500" };
+    }
+
+    private readonly string _code = @"var options = new SankeyOptions
+{
+    ParticleFlow = true
+};";
+}

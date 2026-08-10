@@ -1,0 +1,49 @@
+@page "/circular-links"
+
+<PageTitle>Circular Links - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Circular Links</h1>
+    <p class="description">
+        The layered layout routes cyclic flows (a back-edge whose target sits at an earlier rank than its source) as loops
+        and renders them legibly with a dashed outline. No special option: just include the back-edges in your data. This
+        example recirculates material from <strong>Recycle</strong> back to <strong>Manufacturing</strong>.
+    </p>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data" Options="@_options" Style="margin: 0 auto; width: 800px; height: 500px;" />
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_code</code></pre>
+    </div>
+</div>
+
+@code {
+    private readonly SankeyData _data = new()
+    {
+        Nodes = new List<SankeyNode>
+        {
+            new() { Id = "Raw", Title = "Raw Material", Color = "#64748b" },
+            new() { Id = "Mfg", Title = "Manufacturing", Color = "#6366f1" },
+            new() { Id = "Use", Title = "Consumer Use", Color = "#10b981" },
+            new() { Id = "Recycle", Title = "Recycle", Color = "#f59e0b" },
+            new() { Id = "Landfill", Title = "Landfill", Color = "#ef4444" },
+        },
+        Edges = new List<SankeyEdge>
+        {
+            new() { Source = "Raw", Target = "Mfg", Value = 100 },
+            new() { Source = "Mfg", Target = "Use", Value = 120 },
+            new() { Source = "Use", Target = "Recycle", Value = 70 },
+            new() { Source = "Use", Target = "Landfill", Value = 50 },
+            new() { Source = "Recycle", Target = "Mfg", Value = 60 }, // back-edge (loop)
+            new() { Source = "Recycle", Target = "Raw", Value = 10 }, // back-edge (loop)
+        }
+    };
+
+    private readonly SankeyOptions _options = new() { Height = "500", EdgeGradientFill = true };
+
+    private readonly string _code = @"// A back-edge (target at an earlier rank than its source) renders as a dashed loop.
+new SankeyEdge { Source = ""Recycle"", Target = ""Mfg"", Value = 60 };";
+}

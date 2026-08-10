@@ -29,4 +29,31 @@ public static class DemoData
             new() { Source = "Grid", Target = "Factory", Value = 5 },
         }
     };
+
+    /// <summary>
+    /// A richer energy mix (four sources into the grid, out to two sinks). Used by
+    /// the theme, particle-flow and draggable-node demos.
+    /// </summary>
+    public static SankeyData EnergyMix() => new()
+    {
+        Nodes = new List<SankeyNode>
+        {
+            new() { Id = "Coal", Title = "Coal", Color = "#78716c" },
+            new() { Id = "Gas", Title = "Gas", Color = "#f59e0b" },
+            new() { Id = "Solar", Title = "Solar", Color = "#eab308" },
+            new() { Id = "Wind", Title = "Wind", Color = "#38bdf8" },
+            new() { Id = "Grid", Title = "Grid", Color = "#6366f1" },
+            new() { Id = "Homes", Title = "Homes", Color = "#10b981" },
+            new() { Id = "Industry", Title = "Industry", Color = "#ec4899" },
+        },
+        Edges = new List<SankeyEdge>
+        {
+            new() { Source = "Coal", Target = "Grid", Value = 150 },
+            new() { Source = "Gas", Target = "Grid", Value = 220 },
+            new() { Source = "Solar", Target = "Grid", Value = 190 },
+            new() { Source = "Wind", Target = "Grid", Value = 180 },
+            new() { Source = "Grid", Target = "Homes", Value = 340 },
+            new() { Source = "Grid", Target = "Industry", Value = 400 },
+        }
+    };
 }

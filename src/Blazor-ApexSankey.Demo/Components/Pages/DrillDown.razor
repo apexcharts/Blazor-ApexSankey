@@ -1,0 +1,83 @@
+@page "/drill-down"
+
+<PageTitle>Drill-down - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Drill-down</h1>
+    <p class="description">
+        The <code>DrillDown</code> plugin shows the diagram as a set of super-nodes and expands one into its constituent
+        flows on click (click any child to collapse it back). Configure it through <code>Options.Plugins.DrillDown</code>
+        with the full detail plus the group definitions. <strong>Click the "Fossil" or "Renewable" node.</strong>
+    </p>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_detail" Options="@_options" Style="margin: 0 auto; width: 800px; height: 520px;" />
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_code</code></pre>
+    </div>
+</div>
+
+@code {
+    private static List<SankeyNode> DetailNodes() => new()
+    {
+        new() { Id = "Coal", Title = "Coal", Color = "#78716c" },
+        new() { Id = "Gas", Title = "Gas", Color = "#f59e0b" },
+        new() { Id = "Oil", Title = "Oil", Color = "#a16207" },
+        new() { Id = "Solar", Title = "Solar", Color = "#eab308" },
+        new() { Id = "Wind", Title = "Wind", Color = "#38bdf8" },
+        new() { Id = "Grid", Title = "Grid", Color = "#6366f1" },
+        new() { Id = "Homes", Title = "Homes", Color = "#10b981" },
+        new() { Id = "Industry", Title = "Industry", Color = "#ec4899" },
+    };
+
+    private static List<SankeyEdge> DetailEdges() => new()
+    {
+        new() { Source = "Coal", Target = "Grid", Value = 150 },
+        new() { Source = "Gas", Target = "Grid", Value = 220 },
+        new() { Source = "Oil", Target = "Grid", Value = 90 },
+        new() { Source = "Solar", Target = "Grid", Value = 190 },
+        new() { Source = "Wind", Target = "Grid", Value = 180 },
+        new() { Source = "Grid", Target = "Homes", Value = 430 },
+        new() { Source = "Grid", Target = "Industry", Value = 400 },
+    };
+
+    private readonly SankeyData _detail = new() { Nodes = DetailNodes(), Edges = DetailEdges() };
+
+    private readonly SankeyOptions _options = new()
+    {
+        Height = "520",
+        Plugins = new SankeyPlugins
+        {
+            DrillDown = new DrillDownPlugin
+            {
+                Nodes = DetailNodes(),
+                Edges = DetailEdges(),
+                Groups = new List<DrillDownGroup>
+                {
+                    new() { Id = "Fossil", Title = "Fossil", Color = "#78716c", Children = new() { "Coal", "Gas", "Oil" } },
+                    new() { Id = "Renewable", Title = "Renewable", Color = "#22c55e", Children = new() { "Solar", "Wind" } },
+                }
+            }
+        }
+    };
+
+    private readonly string _code = @"var options = new SankeyOptions
+{
+    Plugins = new SankeyPlugins
+    {
+        DrillDown = new DrillDownPlugin
+        {
+            Nodes = detailNodes,
+            Edges = detailEdges,
+            Groups = new List<DrillDownGroup>
+            {
+                new() { Id = ""Fossil"", Title = ""Fossil"", Children = new() { ""Coal"", ""Gas"", ""Oil"" } },
+                new() { Id = ""Renewable"", Title = ""Renewable"", Children = new() { ""Solar"", ""Wind"" } },
+            }
+        }
+    }
+};";
+}

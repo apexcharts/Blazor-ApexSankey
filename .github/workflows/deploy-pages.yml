@@ -56,10 +56,25 @@ jobs:
             -o publish \
             /p:Version="$VERSION"
 
-      - name: Change base href in index.html
+      - name: Change base href for GitHub Pages (index.html + 404.html)
         run: |
-          # update base href for github pages subdirectory
+          # The site is served from /Blazor-ApexSankey/, so the base href must
+          # point there or every asset resolves against the origin root.
           sed -i 's/<base href="\/" \/>/<base href="\/Blazor-ApexSankey\/" \/>/g' publish/wwwroot/index.html
+          # 404.html is served for any deep link (e.g. /Blazor-ApexSankey/chord).
+          # Make it a copy of the rewritten index so the SPA boots with the correct
+          # base href and the Blazor router resolves the route client-side. Without
+          # this, deep links load 404.html with base "/" and every asset 404s
+          # (the page hangs on "Loading...").
+          cp publish/wwwroot/index.html publish/wwwroot/404.html
+          # Guard: fail the deploy if either file still carries the unrewritten base
+          # href, or if 404.html did not get the rewritten one.
+          if grep -q '<base href="/" />' publish/wwwroot/index.html publish/wwwroot/404.html; then
+            echo "::error::base href was not rewritten for GitHub Pages"; exit 1
+          fi
+          if ! grep -q '<base href="/Blazor-ApexSankey/" />' publish/wwwroot/404.html; then
+            echo "::error::404.html is missing the rewritten base href"; exit 1
+          fi
 
       - name: Add .nojekyll file
         run: touch publish/wwwroot/.nojekyll

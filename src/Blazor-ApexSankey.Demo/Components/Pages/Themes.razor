@@ -1,0 +1,54 @@
+@page "/themes"
+
+<PageTitle>Themes - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Themes</h1>
+    <p class="description">
+        The <code>Theme</code> option seeds a coordinated palette, colors, and background. Pick a built-in by name
+        (<code>light</code>, <code>dark</code>, <code>midnight</code>, <code>mint</code>, <code>sunset</code>), or pass an
+        inline <code>SankeyTheme</code>. Options you set explicitly still win.
+    </p>
+
+    <div class="controls-panel">
+        <h3>Options</h3>
+        <div class="controls-row">
+            <div class="control-group">
+                <label>Theme</label>
+                <select @bind="_theme" @bind:after="UpdateOptions">
+                    <option value="light">light</option>
+                    <option value="dark">dark</option>
+                    <option value="midnight">midnight</option>
+                    <option value="mint">mint</option>
+                    <option value="sunset">sunset</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data" Options="@_options" Style="margin: 0 auto; width: 800px; height: 500px;" />
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_code</code></pre>
+    </div>
+</div>
+
+@code {
+    private string _theme = "dark";
+    private readonly SankeyData _data = DemoData.EnergyMix();
+
+    private SankeyOptions _options = new() { Theme = "dark", Height = "500" };
+
+    private void UpdateOptions()
+    {
+        _options = new SankeyOptions { Theme = _theme, Height = "500" };
+    }
+
+    private readonly string _code = @"var options = new SankeyOptions
+{
+    Theme = ""dark""   // or an inline SankeyTheme { ... }
+};";
+}

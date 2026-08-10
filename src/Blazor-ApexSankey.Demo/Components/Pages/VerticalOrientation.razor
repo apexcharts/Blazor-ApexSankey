@@ -1,0 +1,50 @@
+@page "/vertical-orientation"
+
+<PageTitle>Vertical Orientation - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Vertical Orientation</h1>
+    <p class="description">
+        Set <code>Orientation = "vertical"</code> to lay the ranks out in rows so flows read top to bottom instead of
+        left to right. Everything else (colors, tooltips, highlighting) works the same.
+    </p>
+
+    <div class="controls-panel">
+        <h3>Options</h3>
+        <div class="controls-row">
+            <div class="control-group">
+                <label>Orientation</label>
+                <select @bind="_orientation" @bind:after="UpdateOptions">
+                    <option value="vertical">vertical</option>
+                    <option value="horizontal">horizontal</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_data" Options="@_options" Style="margin: 0 auto; width: 700px; height: 620px;" />
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_code</code></pre>
+    </div>
+</div>
+
+@code {
+    private string _orientation = "vertical";
+    private readonly SankeyData _data = DemoData.EnergyMix();
+
+    private SankeyOptions _options = new() { Orientation = "vertical", Height = "620" };
+
+    private void UpdateOptions()
+    {
+        _options = new SankeyOptions { Orientation = _orientation, Height = "620" };
+    }
+
+    private readonly string _code = @"var options = new SankeyOptions
+{
+    Orientation = ""vertical""
+};";
+}

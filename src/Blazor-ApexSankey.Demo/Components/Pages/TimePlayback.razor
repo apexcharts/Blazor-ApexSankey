@@ -1,0 +1,78 @@
+@page "/time-playback"
+
+<PageTitle>Time Playback - Blazor-ApexSankey Demo</PageTitle>
+
+<div class="demo-page">
+    <h1>Time Playback</h1>
+    <p class="description">
+        The <code>TimePlayback</code> plugin steps the diagram through a sequence of data frames, driven by the chart's own
+        update so topology-stable frames morph smoothly from one to the next. It ships a play/pause control bar with a
+        scrubber. Configure it through <code>Options.Plugins.TimePlayback</code>. <strong>Press play.</strong>
+    </p>
+
+    <div class="chart-container">
+        <ApexSankey Data="@_frame0" Options="@_options" Style="margin: 0 auto; width: 800px; height: 500px;" />
+    </div>
+
+    <div class="code-section">
+        <h3>Code</h3>
+        <pre><code>@_code</code></pre>
+    </div>
+</div>
+
+@code {
+    private static List<SankeyNode> Nodes() => new()
+    {
+        new() { Id = "Coal", Title = "Coal", Color = "#78716c" },
+        new() { Id = "Gas", Title = "Gas", Color = "#f59e0b" },
+        new() { Id = "Solar", Title = "Solar", Color = "#eab308" },
+        new() { Id = "Wind", Title = "Wind", Color = "#38bdf8" },
+        new() { Id = "Grid", Title = "Grid", Color = "#6366f1" },
+        new() { Id = "Demand", Title = "Demand", Color = "#10b981" },
+    };
+
+    private static TimePlaybackFrame Frame(string label, double coal, double gas, double solar, double wind) => new()
+    {
+        Label = label,
+        Nodes = Nodes(),
+        Edges = new List<SankeyEdge>
+        {
+            new() { Source = "Coal", Target = "Grid", Value = coal },
+            new() { Source = "Gas", Target = "Grid", Value = gas },
+            new() { Source = "Solar", Target = "Grid", Value = solar },
+            new() { Source = "Wind", Target = "Grid", Value = wind },
+            new() { Source = "Grid", Target = "Demand", Value = coal + gas + solar + wind },
+        }
+    };
+
+    private static readonly List<TimePlaybackFrame> Frames = new()
+    {
+        Frame("2015", 320, 240, 40, 60),
+        Frame("2020", 240, 250, 120, 150),
+        Frame("2025", 150, 220, 240, 280),
+    };
+
+    private readonly SankeyData _frame0 = new() { Nodes = Frames[0].Nodes, Edges = Frames[0].Edges };
+
+    private readonly SankeyOptions _options = new()
+    {
+        Height = "500",
+        Plugins = new SankeyPlugins
+        {
+            TimePlayback = new TimePlaybackPlugin { Frames = Frames, Interval = 1200, Loop = true }
+        }
+    };
+
+    private readonly string _code = @"var options = new SankeyOptions
+{
+    Plugins = new SankeyPlugins
+    {
+        TimePlayback = new TimePlaybackPlugin
+        {
+            Frames = frames,   // each: { Nodes, Edges, Label }
+            Interval = 1200,
+            Loop = true
+        }
+    }
+};";
+}
