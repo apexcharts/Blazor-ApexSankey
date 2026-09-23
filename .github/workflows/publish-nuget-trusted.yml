@@ -24,20 +24,32 @@ jobs:
 
       - name: Check commit message and extract version
         id: check
+        # The commit message arrives through `env`, never interpolated into the
+        # script body. `${{ }}` substitution happens before bash sees the script,
+        # so a message containing backticks, quotes or $( ) was executed as shell.
+        # That broke a release whose body used markdown backticks, and it is also
+        # an injection hole: this job holds `id-token: write` and can push to
+        # nuget.org, so a crafted commit message could have exfiltrated the OIDC
+        # token. As an env var the message is data, never code.
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          MSG: ${{ github.event.head_commit.message }}
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
             LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
             VERSION=${LATEST_TAG#v}
             echo "version=$VERSION" >> $GITHUB_OUTPUT
             echo "Manual trigger: using latest tag version $VERSION"
           else
-            MSG="${{ github.event.head_commit.message }}"
-            if echo "$MSG" | grep -qE '^release: [0-9]+\.[0-9]+\.[0-9]+'; then
-              VERSION=$(echo "$MSG" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+[^ ]*' | head -1)
+            # Only the subject line decides the version, so a long body cannot
+            # contribute a stray version-looking token.
+            SUBJECT=$(printf '%s' "$MSG" | head -1)
+            if printf '%s' "$SUBJECT" | grep -qE '^release: [0-9]+\.[0-9]+\.[0-9]+'; then
+              VERSION=$(printf '%s' "$SUBJECT" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+[^ ]*' | head -1)
               echo "version=$VERSION" >> $GITHUB_OUTPUT
               echo "Release commit: version $VERSION"
             else
-              echo "❌ Commit message must match 'release: X.Y.Z'"
+              echo "❌ Commit subject must match 'release: X.Y.Z'"
               exit 1
             fi
           fi
