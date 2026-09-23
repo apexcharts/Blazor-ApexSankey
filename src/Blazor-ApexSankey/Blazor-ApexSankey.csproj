@@ -10,7 +10,7 @@
     
     <!-- NuGet Package Configuration -->
     <PackageId>Blazor-ApexSankey</PackageId>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
     <Authors>ApexCharts</Authors>
     <Company>ApexCharts</Company>
     <Product>Blazor-ApexSankey</Product>
@@ -19,11 +19,19 @@
     <PackageProjectUrl>https://github.com/apexcharts/Blazor-ApexSankey</PackageProjectUrl>
     <RepositoryUrl>https://github.com/apexcharts/Blazor-ApexSankey</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <!--
+      The LICENSE file, not an SPDX expression. This package embeds the ApexSankey engine
+      (wwwroot/apexsankey.min.js) as a static web asset, so the declared licence covers that
+      engine as well as the C# wrapper. ApexSankey is commercial, Pro plan and above, with no
+      free tier, which no SPDX expression can express and which MIT actively contradicts.
+    -->
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Copyright>Copyright © ApexCharts 2025</Copyright>
-    <PackageReleaseNotes>1.2.0 Ports the apexsankey 1.11.0 option surface into the C# model: type (chord), arcCornerRadius, theme (named or inline SankeyTheme) and nodePalette, orientation, whitespace, axisTitles, viewPortWidth/Height, draggableNodes, particleFlow, nodeTooltipTemplate, tooltipTheme, tooltipFontColor, and a11y. Adds a Plugins option to install the built-in path tracing, time playback, and drill-down plugins. Non-breaking over 1.1.0.</PackageReleaseNotes>
+    <PackageReleaseNotes>1.2.1 Corrects the package licence metadata. Releases up to and including 1.2.0 declared the SPDX expression MIT, which was wrong: this package embeds the ApexSankey engine, and ApexSankey is a commercial product included in the Pro plan and above with no free tier. The LICENSE file in the repository always stated those terms, so the package contradicted its own licence document. 1.2.1 declares the LICENSE file itself and ships it inside the package. No code changes.
+
+      1.2.0 Ports the apexsankey 1.11.0 option surface into the C# model: type (chord), arcCornerRadius, theme (named or inline SankeyTheme) and nodePalette, orientation, whitespace, axisTitles, viewPortWidth/Height, draggableNodes, particleFlow, nodeTooltipTemplate, tooltipTheme, tooltipFontColor, and a11y. Adds a Plugins option to install the built-in path tracing, time playback, and drill-down plugins. Non-breaking over 1.1.0.</PackageReleaseNotes>
 
     <!-- Package Settings -->
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -41,6 +49,7 @@
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
     <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
