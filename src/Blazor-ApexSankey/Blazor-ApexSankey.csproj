@@ -20,12 +20,12 @@
     <RepositoryUrl>https://github.com/apexcharts/Blazor-ApexSankey</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <!--
-      The LICENSE file, not an SPDX expression. This package embeds the ApexSankey engine
+      The LICENSE.md file, not an SPDX expression. This package embeds the ApexSankey engine
       (wwwroot/apexsankey.min.js) as a static web asset, so the declared licence covers that
       engine as well as the C# wrapper. ApexSankey is commercial, Pro plan and above, with no
       free tier, which no SPDX expression can express and which MIT actively contradicts.
     -->
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Copyright>Copyright © ApexCharts 2025</Copyright>
@@ -49,7 +49,7 @@
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
-    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE.md" Pack="true" PackagePath="\" />
     <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
