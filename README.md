@@ -156,6 +156,37 @@ var data = new SankeyData
 | `OnNodeClick` | `EventCallback<NodeClickEventArgs>` | Fired when a node is clicked |
 | `OnRender`    | `EventCallback`                     | Fired after chart renders    |
 
+## Ignite UI theming
+
+From the Blazor-ApexSankey release that bundles apexsankey 1.14.0, diagrams can follow the Ignite UI theme on the page: the node palette, label text, the focus ring, the font, the tooltip, light or dark. It is an add-on, it is free, and it needs no license key. Turn it on once in `Program.cs`:
+
+```csharp
+ApexSankeyIgniteUI.Enable();
+```
+
+The component then loads `_content/Blazor-ApexSankey/apexsankey.ignite-ui.es.min.js` before the first diagram renders. To load it yourself instead, add the script-tag build to `index.html` (or `App.razor`), before or after the Blazor script:
+
+```html
+<script src="_content/Blazor-ApexSankey/apexsankey.ignite-ui.min.js"></script>
+```
+
+The Ignite UI tokens (`--ig-*`) are the lowest-ranked layer above the built-in defaults. Anything above them wins:
+
+| Rank | Source |
+| ---- | ------ |
+| 1 | An option you pass in `SankeyOptions` |
+| 2 | An `--apex-sankey-*` CSS variable |
+| 3 | An `--apx-*` family token |
+| 4 | A named or registered `Theme` |
+| 5 | The Ignite UI theme (`--ig-*`), with the add-on loaded |
+| 6 | The built-in defaults |
+
+To turn it off for one diagram, set `DesignSystem = false`; the `--apx-*` tokens still apply. `Tokens = false` stops every token read (`--apx-*` and `--ig-*`). Without the add-on the `--ig-*` tokens are ignored, with no error.
+
+The diagram reads its theme on every render. After a change that does not render, such as swapping the Ignite UI stylesheet for its dark variant, call `RefreshTokensAsync()` on the component (through `@ref`); node positions are kept.
+
+The font comes from `--ig-font-family`, which is usually a web font, and the Ignite UI theme sheets do not load it. Load the font on the page; if it finishes loading after the first render, call `RefreshTokensAsync()` so the labels are measured with it.
+
 ## Licensing
 
 To use with a commercial license:

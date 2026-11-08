@@ -109,6 +109,13 @@
                 await _module.InvokeVoidAsync("setLicense", ApexSankeyLicense.LicenseKey);
             }
 
+            // load the Ignite UI add-on (if enabled) before the first render, so
+            // the diagram reads the page's design system on its first paint
+            if (ApexSankeyIgniteUI.IsEnabled)
+            {
+                await _module.InvokeAsync<bool>("loadIgniteUI");
+            }
+
             var options = SerializeOptions();
             var data = SerializeData();
 
@@ -130,6 +137,22 @@
         {
             _lastDataHash = ComputeHash(Data, Options);
             await ReInitializeChartAsync();
+        }
+    }
+
+    /// <summary>
+    /// re-reads the theme (the --apex-sankey-* variables, the --apx-* tokens, the
+    /// named or registered theme and the page's design system) and repaints the
+    /// diagram without re-creating it. the diagram reads its theme on every render,
+    /// so call this after a change that does not render: a stylesheet swap (an
+    /// Ignite UI light/dark switch, say) or a class that sets the variables.
+    /// nodes stay where they are. a no-op before the first render.
+    /// </summary>
+    public async Task RefreshTokensAsync()
+    {
+        if (_module is not null && _isInitialized)
+        {
+            await _module.InvokeVoidAsync("refreshTokens", _elementId);
         }
     }
 

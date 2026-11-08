@@ -75,6 +75,48 @@ export async function setLicense(licenseKey) {
   }
 }
 
+// pending or settled load of the Ignite UI add-on (loaded at most once)
+let igniteUILoad = null;
+
+/**
+ * loads the Ignite UI add-on, which registers the Ignite UI adapter on the
+ * family-wide registry so diagrams read the page's --ig-* tokens. resolves to
+ * false (with a console error) when the file cannot be loaded, so a missing
+ * add-on never blocks a render.
+ * @returns {Promise<boolean>} - true once the add-on is loaded
+ */
+export function loadIgniteUI() {
+  if (!igniteUILoad) {
+    igniteUILoad = import("./apexsankey.ignite-ui.es.min.js").then(
+      () => true,
+      (error) => {
+        console.error("failed to load the ApexSankey Ignite UI add-on:", error);
+        return false;
+      }
+    );
+  }
+  return igniteUILoad;
+}
+
+/**
+ * re-reads the theme (the --apex-sankey-* variables, the --apx-* tokens, the
+ * named or registered theme and the page's design system) and repaints the
+ * diagram. call it after a stylesheet swap, such as an Ignite UI light/dark switch.
+ * @param {string} elementId - the container element id
+ */
+export function refreshTokens(elementId) {
+  const chartData = chartInstances.get(elementId);
+  if (!chartData) {
+    return;
+  }
+
+  if (typeof chartData.instance.refreshTokens === "function") {
+    chartData.instance.refreshTokens();
+  } else {
+    console.warn("refreshTokens method not available on chart instance");
+  }
+}
+
 /**
  * creates a new sankey chart instance
  * @param {string} elementId - the container element id

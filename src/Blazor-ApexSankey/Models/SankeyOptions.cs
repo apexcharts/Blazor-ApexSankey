@@ -77,6 +77,23 @@ public class SankeyOptions
     [JsonPropertyName("nodePalette")]
     public List<string>? NodePalette { get; set; }
 
+    /// <summary>
+    /// set to false to stop the diagram reading the page's design system (the
+    /// Ignite UI --ig-* tokens, including its light or dark variant). the --apx-*
+    /// family tokens still apply. has an effect only while the Ignite UI add-on is
+    /// loaded (see <see cref="Blazor_ApexSankey.ApexSankeyIgniteUI"/>). (default: true)
+    /// </summary>
+    [JsonPropertyName("designSystem")]
+    public bool? DesignSystem { get; set; }
+
+    /// <summary>
+    /// set to false to stop the diagram reading the --apx-* family tokens and the
+    /// page's design system. options you pass, the --apex-sankey-* variables and a
+    /// named theme still apply. (default: true)
+    /// </summary>
+    [JsonPropertyName("tokens")]
+    public bool? Tokens { get; set; }
+
     // layout options
 
     /// <summary>

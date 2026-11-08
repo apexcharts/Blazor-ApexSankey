@@ -77,6 +77,26 @@ public class ApexSankeyInterop : IAsyncDisposable
     }
 
     /// <summary>
+    /// loads the Ignite UI add-on (at most once); returns false when it cannot be
+    /// loaded. call it before creating the charts that should follow the page's
+    /// Ignite UI theme, or use <see cref="ApexSankeyIgniteUI.Enable"/> instead.
+    /// </summary>
+    public async Task<bool> LoadIgniteUIAsync()
+    {
+        var module = await GetModuleAsync();
+        return await module.InvokeAsync<bool>("loadIgniteUI");
+    }
+
+    /// <summary>
+    /// re-reads the theme and repaints the chart, after a stylesheet swap
+    /// </summary>
+    public async Task RefreshTokensAsync(string elementId)
+    {
+        var module = await GetModuleAsync();
+        await module.InvokeVoidAsync("refreshTokens", elementId);
+    }
+
+    /// <summary>
     /// exports the chart as an SVG
     /// </summary>
     public async Task ExportToSvgAsync(string elementId)
