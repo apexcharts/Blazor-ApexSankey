@@ -158,7 +158,7 @@ var data = new SankeyData
 
 ## Ignite UI theming
 
-From the Blazor-ApexSankey release that bundles apexsankey 1.14.0, diagrams can follow the Ignite UI theme on the page: the node palette, label text, the focus ring, the font, the tooltip, light or dark. It is an add-on, it is free, and it needs no license key. Turn it on once in `Program.cs`:
+From Blazor-ApexSankey 1.3.0, which bundles apexsankey 1.14.0, diagrams can follow the Ignite UI theme on the page: the node palette, label text, the focus ring, the font, the tooltip, light or dark. It is an add-on, it is free, and it needs no license key. Turn it on once in `Program.cs`:
 
 ```csharp
 ApexSankeyIgniteUI.Enable();
